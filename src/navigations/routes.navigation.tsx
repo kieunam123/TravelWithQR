@@ -13,6 +13,7 @@ import {
 	StartScreen,
 	DashboardScreen,
 } from '../screens/mains';
+import BottomTabNavigator from './bottomTabs/bottomtab.navigation';
 
 const Stack = createStackNavigator();
 
@@ -30,8 +31,9 @@ const RoutesNavigatorContainer = (): any => {
 					screenOptions={{
 						headerShown: false
 					}}>
+						<Stack.Screen name={ScreenType.Main.Tab} component={BottomTabNavigator} options={{gestureEnabled: true}}/>
 						<Stack.Screen name={ScreenType.Main.Start} component={StartScreen}/>
-						<Stack.Screen name={ScreenType.Main.Dashboard} component={DashboardScreen}/>
+						{/* <Stack.Screen name={ScreenType.Main.Dashboard} component={DashboardScreen}/> */}
 
 				</Stack.Navigator>
 			</NavigationContainer>

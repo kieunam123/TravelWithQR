@@ -3,15 +3,15 @@ import React from 'react'
 import { Header } from '~/components/sections'
 import { SafeView } from '~/components/commons'
 
-const DashboardScreen = () => {
+const SettingScreen = () => {
 	return (
 		<View style={styles.container}>
-			<Text style={styles.text}>Home Screen</Text>
+			<Text style={styles.text}>Setting Screen</Text>
 		</View>
 	)
 }
 
-export default DashboardScreen
+export default SettingScreen
 
 const styles = StyleSheet.create({
 	container: {

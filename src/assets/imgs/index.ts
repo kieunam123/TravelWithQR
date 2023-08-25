@@ -18,6 +18,8 @@ const imgs = {
   empty: require('./empty.png'),
   customer: require('./kyc.png'),
   no_img: require('./no_img.png'),
+  cover_img: require('./coverimg.jpg'),
+  cover_img2: require('./cover2.jpeg'),
 };
 
 export default imgs;

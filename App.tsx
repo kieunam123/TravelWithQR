@@ -44,10 +44,10 @@ const App = () => {
     } catch (e) {
       // xử lí lỗi.
       // thường thì sẽ vào đây khi ứng dụng không thể kết nối đến internet.
-      Alert.alert('Network Error', 'Không có Internet. Vui lòng kiểm tra kết nối mạng của bạn', [
-        { text: 'Reload', onPress: () => { } },
-        { text: 'Thoát', onPress: () => {exitApp();} }
-      ]);
+      // Alert.alert('Network Error', 'Không có Internet. Vui lòng kiểm tra kết nối mạng của bạn', [
+      //   { text: 'Reload', onPress: () => { } },
+      //   { text: 'Thoát', onPress: () => {exitApp();} }
+      // ]);
     }
   }
 
@@ -58,6 +58,7 @@ const App = () => {
     RobotoMedium: require('./src/assets/fonts/Roboto-Medium.ttf'),
     RobotoMediumItalic: require('./src/assets/fonts/Roboto-MediumItalic.ttf'),
     RobotoRegular: require('./src/assets/fonts/Roboto-Regular.ttf'),
+    RobotoLight: require('./src/assets/fonts/Roboto-Light.ttf')
   });
 
   useEffect(() => {

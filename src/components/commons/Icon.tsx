@@ -1,15 +1,21 @@
 import React from 'react';
-import {TextStyle, StyleProp} from 'react-native';
+import { TextStyle, StyleProp } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import Foundation from 'react-native-vector-icons/Foundation';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Octicons from 'react-native-vector-icons/Octicons'
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import styles from './common.styles';
-import {Sizes, Colors} from '../../configs';
-import {IconType} from '../../commons/types';
-import {scaleFactor} from '../../helpers/UtilitiesHelper';
+import { Sizes, Colors } from '../../configs';
+import { IconType } from '../../commons/types';
+import { scaleFactor } from '../../helpers/UtilitiesHelper';
 
 export interface IIconProps {
   type: IconType;
@@ -17,21 +23,30 @@ export interface IIconProps {
   color?: string;
   size?: number;
   style?: StyleProp<TextStyle>;
-  onIconPress?:()=> void;
+  onIconPress?: () => void;
 }
 
-const Icon: React.FC<IIconProps> = ({type, name, color, size, style, onIconPress}) => {
-  let component = null;
-  const iconSize = scaleFactor(size);
+const Icon: React.FC<IIconProps> = ({ type, name, color, size, style, onIconPress }) => {
+  const iconSize = scaleFactor(size ?? Sizes.Icon);
+  const iconColor = color ?? Colors.ORIGIN;
+  let component = (
+    <AntDesign
+      name={name}
+      size={iconSize}
+      color={iconColor}
+      style={[styles.iconCommon, style]}
+      onPress={onIconPress}
+    />
+  );
   switch (type) {
     case 'AntDesign':
       component = (
         <AntDesign
           name={name}
           size={iconSize}
-          color={color}
+          color={iconColor}
           style={[styles.iconCommon, style]}
-          onPress = {onIconPress}
+          onPress={onIconPress}
         />
       );
       break;
@@ -40,9 +55,9 @@ const Icon: React.FC<IIconProps> = ({type, name, color, size, style, onIconPress
         <Entypo
           name={name}
           size={iconSize}
-          color={color}
+          color={iconColor}
           style={[styles.iconCommon, style]}
-          onPress = {onIconPress}
+          onPress={onIconPress}
         />
       );
       break;
@@ -51,9 +66,9 @@ const Icon: React.FC<IIconProps> = ({type, name, color, size, style, onIconPress
         <MaterialIcons
           name={name}
           size={iconSize}
-          color={color}
+          color={iconColor}
           style={[styles.iconCommon, style]}
-          onPress = {onIconPress}
+          onPress={onIconPress}
         />
       );
       break;
@@ -62,9 +77,9 @@ const Icon: React.FC<IIconProps> = ({type, name, color, size, style, onIconPress
         <EvilIcons
           name={name}
           size={iconSize}
-          color={color}
+          color={iconColor}
           style={[styles.iconCommon, style]}
-          onPress = {onIconPress}
+          onPress={onIconPress}
         />
       );
       break;
@@ -73,9 +88,9 @@ const Icon: React.FC<IIconProps> = ({type, name, color, size, style, onIconPress
         <FontAwesome
           name={name}
           size={iconSize}
-          color={color}
+          color={iconColor}
           style={[styles.iconCommon, style]}
-          onPress = {onIconPress}
+          onPress={onIconPress}
         />
       );
       break;
@@ -84,9 +99,75 @@ const Icon: React.FC<IIconProps> = ({type, name, color, size, style, onIconPress
         <Feather
           name={name}
           size={iconSize}
-          color={color}
+          color={iconColor}
           style={[styles.iconCommon, style]}
-          onPress = {onIconPress}
+          onPress={onIconPress}
+        />
+      );
+      break;
+    case 'MaterialCommunityIcons':
+      component = (
+        <MaterialCommunityIcons
+          name={name}
+          size={iconSize}
+          color={iconColor}
+          style={[styles.iconCommon, style]}
+          onPress={onIconPress}
+        />
+      );
+      break;
+    case 'SimpleLineIcons':
+      component = (
+        <SimpleLineIcons
+          name={name}
+          size={iconSize}
+          color={iconColor}
+          style={[styles.iconCommon, style]}
+          onPress={onIconPress}
+        />
+      );
+      break;
+    case 'Foundation':
+      component = (
+        <Foundation
+          name={name}
+          size={iconSize}
+          color={iconColor}
+          style={[styles.iconCommon, style]}
+          onPress={onIconPress}
+        />
+      );
+      break;
+    case 'FontAwesome5':
+      component = (
+        <FontAwesome5
+          name={name}
+          size={iconSize}
+          color={iconColor}
+          style={[styles.iconCommon, style]}
+          onPress={onIconPress}
+        />
+      );
+      break;
+    case 'Octicons':
+      component = (
+        <Octicons
+          name={name}
+          size={iconSize}
+          color={iconColor}
+          style={[styles.iconCommon, style]}
+          onPress={onIconPress}
+        />
+      );
+      break;
+    case 'Ionicons':
+      component = (
+        <Ionicons
+          name={name}
+          size={iconSize}
+          color={iconColor}
+          style={[styles.iconCommon, style]}
+          onPress={onIconPress}
         />
       );
       break;
@@ -95,9 +176,9 @@ const Icon: React.FC<IIconProps> = ({type, name, color, size, style, onIconPress
         <AntDesign
           name={name}
           size={iconSize}
-          color={color}
+          color={iconColor}
           style={[styles.iconCommon, style]}
-          onPress = {onIconPress}
+          onPress={onIconPress}
         />
       );
       break;

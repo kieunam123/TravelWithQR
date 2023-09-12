@@ -3,31 +3,45 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { Icon } from '~/components/commons';
 import ScreenType from '../screen.constant';
-import { DashboardScreen, SettingScreen } from '~/screens/mains';
+import { DashboardScreen, NotificationScreen, QRScanScreen, SearchScreen, SettingScreen } from '~/screens/mains';
+import { scaleFactor } from '~/helpers/UtilitiesHelper';
 
 const Tab = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {
+  const getIcon = (routeName: string, focused: boolean, color: string, size: number) => {
+    switch (routeName) {
+      case 'Home':
+        return <Icon type='AntDesign' name={focused ? 'home' : 'home'} size={size} color={color} />;
+      case 'Search':
+        return <Icon type='Entypo' name={'magnifying-glass'} size={size} color={color} />;
+      case 'Scan QR':
+        return <Icon type='MaterialCommunityIcons' name={'qrcode-scan'} size={scaleFactor(30)} color={color} />;
+      case 'Notification':
+        return <Icon type='MaterialCommunityIcons' name={'bell-outline'} size={size} color={color} />;
+      case 'Settings':
+        return <Icon type='Ionicons' name={'settings-outline'} size={size} color={color} />;
+      default:
+        return null;
+    }
+  }
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        tabBarStyle: {},
+        tabBarStyle: { height: scaleFactor(80) },
         tabBarActiveTintColor: 'blue',
         tabBarInactiveTintColor: 'grey',
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName: string;
-          if (route.name === 'Home') {
-            iconName = focused ? 'home' : 'home';
-            return <Icon type='AntDesign' name={iconName} size={size} color={color} />;
-          } else if (route.name === 'Settings') {
-            iconName = focused ? 'setting' : 'setting';
-            return <Icon type='AntDesign' name={iconName} size={size} color={color} />;
-          }
+          return getIcon(route.name, focused, color, size);
         },
       })}
     >
       <Tab.Screen name="Home" component={DashboardScreen} />
+      <Tab.Screen name="Search" component={SearchScreen} />
+      <Tab.Screen name="Scan QR" component={QRScanScreen} />
+      <Tab.Screen name="Notification" component={NotificationScreen} />
       <Tab.Screen name="Settings" component={SettingScreen} />
+
     </Tab.Navigator>
   )
 }

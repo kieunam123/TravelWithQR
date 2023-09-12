@@ -11,7 +11,13 @@ export type IconType =
   | 'EvilIcons'
   | 'Entypo'
   | 'Feather'
-  | 'FontAwesome';
+  | 'MaterialCommunityIcons'
+  | 'SimpleLineIcons'
+  | 'Foundation'
+  | 'FontAwesome5'
+  | 'FontAwesome'
+  | 'Ionicons'
+  | 'Octicons';
 
 // Dropdown
 export type DropdownItemType = {

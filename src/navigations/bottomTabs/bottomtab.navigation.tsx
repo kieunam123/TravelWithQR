@@ -36,11 +36,11 @@ const BottomTabNavigator = () => {
         },
       })}
     >
-      <Tab.Screen name="Home" component={DashboardScreen} />
-      <Tab.Screen name="Search" component={SearchScreen} />
-      <Tab.Screen name="Scan QR" component={QRScanScreen} />
-      <Tab.Screen name="Notification" component={NotificationScreen} />
-      <Tab.Screen name="Settings" component={SettingScreen} />
+      <Tab.Screen name={ScreenType.Tab.Home} component={DashboardScreen} />
+      <Tab.Screen name={ScreenType.Tab.Search} component={SearchScreen} />
+      <Tab.Screen name={ScreenType.Tab.ScanQR} component={QRScanScreen} />
+      <Tab.Screen name={ScreenType.Tab.Notification} component={NotificationScreen} />
+      <Tab.Screen name={ScreenType.Tab.Setting} component={SettingScreen} />
 
     </Tab.Navigator>
   )

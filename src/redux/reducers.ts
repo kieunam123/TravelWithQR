@@ -1,9 +1,11 @@
 import {combineReducers} from 'redux';
 import {Types} from './global/global.types';
 import global from './global/global.reducers';
+import master from './master/master.reducers'
 
 const appReducer = combineReducers({
    global,
+   master,
 });
 
 const rootReducer = (state, action) => {

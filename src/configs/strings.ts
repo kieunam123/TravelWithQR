@@ -1,6 +1,5 @@
 
-export const API_URL = 'https://kieunamapp-9ad44-default-rtdb.asia-southeast1.firebasedatabase.app/data/';
-export const PASSCODE_SECRET_KEY = 'bdb51f41fba865ec';
+export const API_URL = 'http://127.0.0.1:5001/cloudfunctions-1c323/us-central1/app/';
 
 const AppString = {
   Common: {

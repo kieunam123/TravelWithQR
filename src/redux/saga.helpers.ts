@@ -30,14 +30,14 @@ export const safe = (saga: any, ...args: any) =>
           yield put(GlobalActions.setConfirmData(type, err.message, payload));
         } else if (err.status === 417 && !err.message.includes("không") && !err.message.includes("Vui")) {
           // eslint-disable-next-line prettier/prettier
-          yield put(GlobalActions.openErrorInfoModal(`${err.message}`.substring(0, 200), 'INFO'));
+          yield put(GlobalActions.openErrorInfoModal(`${err.message}`.substring(0, 1000), 'INFO'));
         } else {
           // eslint-disable-next-line prettier/prettier
-          yield put(GlobalActions.openErrorInfoModal(`${err.message}`.substring(0, 200), 'ERROR'));
+          yield put(GlobalActions.openErrorInfoModal(`${err.message}`.substring(0, 1000), 'ERROR'));
         }
       } else {
         // eslint-disable-next-line prettier/prettier
-        yield put(GlobalActions.openErrorInfoModal(`${err}`.substring(0, 200), 'ERROR'));
+        yield put(GlobalActions.openErrorInfoModal(`${err}`.substring(0, 1000), 'ERROR'));
       }
     }
   };

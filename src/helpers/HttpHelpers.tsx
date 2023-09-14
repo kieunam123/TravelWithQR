@@ -254,3 +254,23 @@ export async function putWithUrl<T>(
   const url = `${api}${path}${objectToQuerystring(urlParams)}`;
   return http<T>(new Request(url, args));
 }
+
+export async function deleteWithUrl<T>(
+  api: string,
+  path: string,
+  body: any,
+  urlParams?: object,
+  accessToken?: string,
+): Promise<T> {
+  if(!api) throw new Error('api is empty');
+  const headers1: HeadersInit = !accessToken
+    ? headers
+    : {...headers, Authorization: accessToken};
+  const args: RequestInit = {
+    method: 'delete',
+    headers: headers1,
+    body: JSON.stringify(body),
+  };
+  const url = `${api}${path}${objectToQuerystring(urlParams)}`;
+  return http<T>(new Request(url, args));
+}

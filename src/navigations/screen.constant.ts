@@ -5,6 +5,13 @@ const ScreenType = {
         Dashboard: 'Dash Board',
         Menu: 'Menu',
         Tab: 'Tab'
+    },
+    Tab: {
+        Home: 'Home',
+        Search: 'Search',
+        ScanQR: 'Scan QR',
+        Notification : 'Notification',
+        Setting : 'Settings'
     }
 };
 

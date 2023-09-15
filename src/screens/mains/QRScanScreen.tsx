@@ -5,29 +5,37 @@ import { SafeView } from '~/components/commons'
 import { CreateLocation } from '~/containers/master'
 import { useIsFocused, useNavigation } from '@react-navigation/native'
 import ScreenType from '~/navigations/screen.constant'
+import { useDispatch, useSelector } from 'react-redux'
+import MasterActions from '~/redux/master/master.actions'
+import { RootState } from '~/redux/reducers'
 
 const QRScanScreen = ({ route }) => {
 	const isFocused = useIsFocused();
-	const navigation = useNavigation()
-	const { obj } = route.params ?? '';
+	const dispatch = useDispatch();
+	const { dataTest } = useSelector((state: RootState) => state.master);
 
 	useEffect(() => {
 		if (isFocused) {
-			
+
 		} else {
-			navigation.setParams({obj:{name: undefined, id: undefined, address: undefined, mobile: undefined}})
+			dispatch(MasterActions.getDataTestSuccess([{ name: '', mobile: '', address: '', id: undefined, isUpdate: false }]))
 		}
-	}, [isFocused,navigation])
+	}, [isFocused])
 
 	return (
 		<View style={styles.container}>
 			{/* <Text style={styles.text}>QR Screen</Text> */}
-			<CreateLocation
-				id={obj ? obj.id : undefined}
-				name={obj ? obj.name : undefined}
-				mobile={obj ? obj.mobile : undefined}
-				address={obj ? obj.address : undefined}
-			/>
+			{dataTest[0].isUpdate && <CreateLocation
+				id={dataTest[0].id}
+				name={dataTest[0].name}
+				mobile={dataTest[0].mobile}
+				address={dataTest[0].address}
+			/>}
+			{!dataTest[0].isUpdate && <CreateLocation
+				name={undefined}
+				mobile={undefined}
+				address={undefined}
+			/>}
 		</View>
 	)
 }

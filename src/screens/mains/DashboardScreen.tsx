@@ -35,14 +35,10 @@ const DashboardScreen = () => {
 	async function onPress(item: ISampleObj) {
 		Alert.alert('Select Action', '', [
 			{
-				text: 'Update', onPress: () => goToScreen(ScreenType.Tab.ScanQR, {
-					obj: {
-						id: item.id,
-						name: item.name,
-						mobile: item.mobile,
-						address: item.address,
-					}
-				})
+				text: 'Update', onPress: () => {
+					goToScreen(ScreenType.Tab.ScanQR);
+					dispatch(MasterActions.getDataTestSuccess([{...item, isUpdate: true}]));
+				}
 			},
 			{
 				text: 'Delete', onPress: () => dispatch(MasterActions.deleteDateTest(`${item.id}`))

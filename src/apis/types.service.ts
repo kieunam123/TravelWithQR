@@ -54,6 +54,7 @@ export interface ISampleObj {
   mobile: string;
   address: string;
   id?: number;
+  isUpdate?: boolean;
 }
 
 //#end

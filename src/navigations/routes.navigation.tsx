@@ -12,6 +12,7 @@ import { RootState } from '../redux/reducers';
 import {
 	StartScreen,
 	DashboardScreen,
+	LoginScreen,
 } from '../screens/mains';
 import BottomTabNavigator from './bottomTabs/bottomtab.navigation';
 
@@ -33,6 +34,7 @@ const RoutesNavigatorContainer = (): any => {
 					}}>
 						<Stack.Screen name={ScreenType.Main.Tab} component={BottomTabNavigator} options={{gestureEnabled: true}}/>
 						<Stack.Screen name={ScreenType.Main.Start} component={StartScreen}/>
+						<Stack.Screen name={ScreenType.Main.Login} component={LoginScreen}/>
 						{/* <Stack.Screen name={ScreenType.Main.Dashboard} component={DashboardScreen}/> */}
 
 				</Stack.Navigator>

@@ -20,6 +20,8 @@ const imgs = {
   no_img: require('./no_img.png'),
   cover_img: require('./coverimg.jpg'),
   cover_img2: require('./cover2.jpeg'),
+  background_img1: require('./bgimg.jpg'),
+  background_img2: require('./bgimg2.jpg')
 };
 
 export default imgs;

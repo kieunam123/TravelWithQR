@@ -1,60 +1,103 @@
 import { all, call, fork, put, takeEvery } from "redux-saga/effects";
-import { ICreateTest, IDeleteTest, IGetTest, IUpdateTest, Types } from "./master.types";
-import { createTestData, deleteDataTest, getDataTest, updateDataTest } from "~/apis/master.service";
-import { IApiResponse, ISampleObj } from "~/apis/types.service";
+import { ICreateUser, IDeleteUser, IGetLocation, IGetUser, IUpdateUser, Types } from "./master.types";
+import { CreateUserData, deleteUser, getLocation, getUser, updateUser } from "~/apis/master.service";
+import { IApiResponse, ILocation, ILocationPlace, IUser } from "~/apis/types.service";
 import GlobalActions from "../global/global.actions";
 import MasterActions from "./master.actions";
 import { safe } from "../saga.helpers";
 
 //#region ================== WORKER ====================
 
-function* handleCreateTest({ payload: ISampleObj }: ICreateTest) {
+function* handleCreateUser({ payload: IUser }: ICreateUser) {
   const response: IApiResponse = yield call(
-    createTestData,
-    ISampleObj
+    CreateUserData,
+    IUser
   );
   if (response.status === 'Success') {
     yield put(GlobalActions.openErrorInfoModal(`Tạo data thành công`));
+  } else {
+    if(response.msg){
+      yield put(GlobalActions.openErrorInfoModal(`Lỗi ${response.status}\nChi tiết: ${response.msg}`));
+    }
   }
 }
 
-function* handleGetData({ payload }: IGetTest) {
+function* handleGetData({ payload }: IGetUser) {
   const { id } = payload;
   const response: IApiResponse = yield call(
-    getDataTest,
+    getUser,
     id,
   );
-  const dataTest: ISampleObj[] = response.data.map((item) => {
-    return {
-      ...item,
-      isUpdate: false,
-    }
-  })
   if (response.status === 'Success') {
-    yield put(MasterActions.getDataTestSuccess(dataTest));
+    const User: IUser[] = response.data.map((item) => {
+      return {
+        ...item,
+        isUpdate: false,
+      }
+    })
+    yield put(MasterActions.getUserSuccess(User));
+  } else {
+    if(response.msg){
+      yield put(GlobalActions.openErrorInfoModal(`Lỗi ${response.status}\nChi tiết: ${response.msg}`));
+    }
   }
 }
 
-function* handleUpdateData({ payload }: IUpdateTest) {
+function* handleUpdateData({ payload }: IUpdateUser) {
   const { id, dataUpdate } = payload;
   const response: IApiResponse = yield call(
-    updateDataTest,
+    updateUser,
     id,
     dataUpdate,
   );
   if (response.status === 'Success') {
     yield put(GlobalActions.openErrorInfoModal(`Cập nhật dữ liệu thành công`));
+  } else {
+    if(response.msg){
+      yield put(GlobalActions.openErrorInfoModal(`Lỗi ${response.status}\nChi tiết: ${response.msg}`));
+    }
   }
 }
 
-function* handleDeleteData({ payload }: IDeleteTest) {
+function* handleDeleteData({ payload }: IDeleteUser) {
   const { id } = payload;
   const response: IApiResponse = yield call(
-    deleteDataTest,
+    deleteUser,
     id,
   );
   if (response.status === 'Success') {
     yield put(GlobalActions.openErrorInfoModal('Xoá dữ liệu thành công'));
+  } else {
+    if(response.msg){
+      yield put(GlobalActions.openErrorInfoModal(`Lỗi ${response.status}\nChi tiết: ${response.msg}`));
+    }
+  }
+}
+
+function* handleGetLocation({ payload }: IGetLocation) {
+  const { id } = payload;
+  const response: IApiResponse = yield call(
+    getLocation,
+    id
+  );
+  if (response.status === 'Success') {
+    yield put(MasterActions.getLocationSuccess(response.data))
+    if (response.data) {
+      let places: ILocationPlace[] = [];
+      const locations: ILocation[] = response.data;
+      locations.forEach((item) => {
+        if (item.places[0] !== undefined) {
+          item.places.forEach((place) => {
+            places.push({...place, city: item.name, country: item.country})
+          })
+        }
+      })
+      yield put(MasterActions.getPlacesSuccess(places));
+    }
+  } else {
+    if(response.msg){
+      yield put(GlobalActions.openErrorInfoModal(`Lỗi ${response.status}\nChi tiết: ${response.msg}`));
+    }
   }
 }
 
@@ -62,8 +105,8 @@ function* handleDeleteData({ payload }: IDeleteTest) {
 
 //#region ========== WATCHER =================
 
-function* watchCreateTest() {
-  yield takeEvery(Types.MASTER_CREATE_TEST, safe(handleCreateTest));
+function* watchCreateUser() {
+  yield takeEvery(Types.MASTER_CREATE_TEST, safe(handleCreateUser));
 }
 
 function* watchGetData() {
@@ -78,14 +121,19 @@ function* watchDeleteData() {
   yield takeEvery(Types.MASTER_DELETE_TEST, safe(handleDeleteData));
 }
 
+function* watchGetLocation() {
+  yield takeEvery(Types.MASTER_GET_LOCATION, safe(handleGetLocation))
+}
+
 //#endregion
 
 
 export default function* masterSaga() {
   yield all([
-    fork(watchCreateTest),
+    fork(watchCreateUser),
     fork(watchGetData),
     fork(watchUpdateData),
     fork(watchDeleteData),
+    fork(watchGetLocation)
   ]);
 }

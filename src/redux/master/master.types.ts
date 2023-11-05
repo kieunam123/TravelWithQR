@@ -1,10 +1,12 @@
 
-import { ISampleObj } from '~/apis/types.service';
+import { ILocation, ILocationPlace, IUser } from '~/apis/types.service';
 import {DropdownItemType} from '../../commons/types';
 
 
 export interface IMasterState {
-  dataTest: ISampleObj[];
+  User: IUser[];
+  locations: ILocation[];
+  places: ILocationPlace[];
 }
 
 
@@ -14,32 +16,53 @@ export enum Types {
   MASTER_GET_TEST_SUCCESS = 'MASTER_GET_TEST_SUCCESS',
   MASTER_DELETE_TEST = 'MASTER_DELETE_TEST',
   MASTER_UPDATE_TEST = 'MASTER_UPDATE_TEST',
+  MASTER_GET_LOCATION = 'MASTER_GET_LOCATION',
+  MASTER_GET_LOCATION_SUCCESS = 'MASTER_GET_LOCATION_SUCCESS',
+  MASTER_GET_PLACES_SUCCESS = 'MASTER_GET_PLACES_SUCCESS'
+  
 }
 
-export interface ICreateTest {
+export interface ICreateUser {
   type: Types.MASTER_CREATE_TEST;
-  payload: ISampleObj;
+  payload: IUser;
 }
 
-export interface IGetTest {
+export interface IGetUser {
   type: Types.MASTER_GET_TEST;
   payload: {id?: string};
 }
 
-export interface IGetTestSuccess {
+export interface IGetUserSuccess {
   type: Types.MASTER_GET_TEST_SUCCESS;
-  payload: {dataTest: ISampleObj[]}
+  payload: {User: IUser[]}
 }
 
-export interface IDeleteTest {
+export interface IDeleteUser {
   type: Types.MASTER_DELETE_TEST;
   payload: {id: string}
 }
 
-export interface IUpdateTest {
+export interface IUpdateUser{
   type: Types.MASTER_UPDATE_TEST;
-  payload: {id:string, dataUpdate: ISampleObj}
+  payload: {id:string, dataUpdate: IUser}
+}
+
+export interface IGetLocation {
+  type: Types.MASTER_GET_LOCATION;
+  payload: {id?: string}
+}
+
+export interface IGetLocationSuccess {
+  type: Types.MASTER_GET_LOCATION_SUCCESS;
+  payload: {locations: ILocation[]}
+}
+
+export interface IGetPlacesSuccess {
+  type: Types.MASTER_GET_PLACES_SUCCESS;
+  payload: {places: ILocationPlace[]}
 }
 
 export type MasterActionsType = 
-  | IGetTestSuccess;
+  | IGetPlacesSuccess
+  | IGetLocationSuccess
+  | IGetUserSuccess;

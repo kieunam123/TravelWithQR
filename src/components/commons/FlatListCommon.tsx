@@ -7,6 +7,7 @@ export interface IFlatListCommonProps {
   data: any[];
   renderItem(item: any): JSX.Element;
   isShowVertical: boolean;
+  horizontal?: boolean;
   isSeparator?: boolean;
   contentContainerStyle?: ViewStyle;
   readonly footer?: React.ReactElement;
@@ -19,6 +20,7 @@ export interface IFlatListCommonProps {
 const FlatListCommon: React.FC<IFlatListCommonProps> = ({
   data,
   isShowVertical,
+  horizontal,
   renderItem,
   isSeparator,
   contentContainerStyle,
@@ -34,6 +36,7 @@ const FlatListCommon: React.FC<IFlatListCommonProps> = ({
   return (
     <FlatList
       data={data}
+      horizontal={horizontal}
       keyExtractor={(_item, index) => `${index}`}
       renderItem={(item) => renderItem(item)}
       showsVerticalScrollIndicator={isShowVertical}

@@ -4,6 +4,7 @@ import SearchScreen from "./SearchScreen";
 import QRScanScreen from "./QRScanScreen";
 import NotificationScreen from "./NotificationScreen";
 import SettingScreen from "./SettingScreen";
+import LoginScreen from "./LoginScreen";
 
 
 export {
@@ -13,4 +14,5 @@ export {
     QRScanScreen,
     NotificationScreen,
     SettingScreen,
+    LoginScreen,
 };

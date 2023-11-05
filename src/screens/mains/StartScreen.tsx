@@ -30,7 +30,7 @@ const StartScreen = () => {
 					<Text style={styles.text}>Travel With QR</Text>
 					<View style={styles.descriptionContainer}>
 						<Text style={styles.descriptionText} >{'Explore every place with a QR scan\nBegin the journey now'}</Text>
-						<TouchableOpacity style={styles.button} onPress={() => navigation.navigate(ScreenType.Main.Tab)}>
+						<TouchableOpacity style={styles.button} onPress={() => navigation.navigate(ScreenType.Main.Login)}>
 							<View style={styles.circle}>
 								<Icon type='AntDesign' name="right" size={24} color="white" />
 							</View>
@@ -86,10 +86,11 @@ const styles = StyleSheet.create({
 	},
 
 	text: {
-		fontFamily: fonts.RobotoLight,
+		fontFamily: fonts.RobotoRegular,
 		fontSize: scaleFactor(55),
 		color: 'white',
 		letterSpacing: 2,
+		fontWeight:'450'
 	},
 
 	descriptionText: {
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
 		fontSize: scaleFactor(15),
 		textAlign: 'center',
 		letterSpacing: 1,
-		lineHeight: 25
+		lineHeight: 25,
 
 	},
 	descriptionContainer: {

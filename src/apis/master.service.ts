@@ -2,10 +2,10 @@ import { deleteWithUrl, getWithUrl, postWithUrl, putWithUrl } from '~/helpers/Ht
 import {
   API_URL,
 } from '../configs/strings';
-import { IApiResponse, ISampleObj } from './types.service';
+import { IApiResponse, ILocation, IUser } from './types.service';
 
-export const createTestData = async (
-  model: ISampleObj,
+export const CreateUserData = async (
+  model: IUser,
 ): Promise<IApiResponse> => {
   return postWithUrl<IApiResponse>(
     API_URL,
@@ -14,19 +14,19 @@ export const createTestData = async (
   )
 };
 
-export const getDataTest = async (
+export const getUser = async (
   id?: string,
-): Promise<IApiResponse> => {
-  return getWithUrl<IApiResponse>(
+): Promise<IUser> => {
+  return getWithUrl<IUser>(
     API_URL,
     `/api/userDetails`,
     {id: id}
   )
 };
 
-export const updateDataTest = async (
+export const updateUser = async (
   id: string,
-  dataUpdate: ISampleObj,
+  dataUpdate: IUser,
 ): Promise<IApiResponse> => {
   return putWithUrl<IApiResponse>(
     API_URL,
@@ -36,7 +36,7 @@ export const updateDataTest = async (
   )
 };
 
-export const deleteDataTest = async (
+export const deleteUser = async (
   id: string,
 ): Promise<IApiResponse> => {
   return deleteWithUrl<IApiResponse>(
@@ -44,5 +44,48 @@ export const deleteDataTest = async (
     `/api/deleteUser`,
     undefined,
     {id:id}
+  )
+};
+
+export const getLocation = async (
+  id?: string,
+): Promise<ILocation[]> => {
+  return getWithUrl<ILocation[]>(
+    API_URL,
+    `/api/locations`,
+    {id: id}
+  )
+};
+
+export const createLocation = async (
+  modal: ILocation,
+): Promise<IApiResponse> => {
+  return postWithUrl<IApiResponse>(
+    API_URL,
+    `/api/createLocation`,
+    modal,
+  )
+};
+
+export const updateLocation = async (
+  id: string,
+  dataUpdate: ILocation, 
+): Promise<IApiResponse> => {
+  return putWithUrl<IApiResponse>(
+    API_URL,
+    `/api/updateLocation`,
+    dataUpdate,
+    {id:id}
+  )
+};
+
+export const deleteLocation = async (
+  id: string
+): Promise<IApiResponse> => {
+  return deleteWithUrl<IApiResponse>(
+    API_URL,
+    `/api/deleteLocation`,
+    undefined,
+    {id: id}
   )
 }

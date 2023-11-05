@@ -21,6 +21,31 @@ export interface IAuthResponse {
   ResponseException?:string[];
 }
 
+export interface ILocation {
+  id: number;
+  country: string;
+  category: string;
+  description: string;
+  short_description: string;
+  date_created: string;
+  date_updated: string;
+  name: string;
+  rate: number;
+  image_links: string[];
+  places: ILocationPlace[];
+}
+
+export interface ILocationPlace {
+  address: string;
+  image_link: string[];
+  name: string;
+  rating: number;
+  description: string;
+  city: string;
+  country: string;
+  short_description: string;
+}
+
 export interface ISearchCommon {
   label: string;
   value: string | number;
@@ -45,11 +70,11 @@ export interface IHttpStatus {
 export interface IApiResponse {
   status: string;
   msg: string;
-  data: ISampleObj[];
+  data: any[];
 }
 
 //#begin 
-export interface ISampleObj {
+export interface IUser {
   name: string;
   mobile: string;
   address: string;

@@ -12,26 +12,26 @@ import { RootState } from '~/redux/reducers'
 const QRScanScreen = ({ route }) => {
 	const isFocused = useIsFocused();
 	const dispatch = useDispatch();
-	const { dataTest } = useSelector((state: RootState) => state.master);
+	const { User } = useSelector((state: RootState) => state.master);
 
 	useEffect(() => {
 		if (isFocused) {
 
 		} else {
-			dispatch(MasterActions.getDataTestSuccess([{ name: '', mobile: '', address: '', id: undefined, isUpdate: false }]))
+			dispatch(MasterActions.getUserSuccess([{ name: '', mobile: '', address: '', id: undefined, isUpdate: false }]))
 		}
 	}, [isFocused])
 
 	return (
 		<View style={styles.container}>
 			{/* <Text style={styles.text}>QR Screen</Text> */}
-			{dataTest[0].isUpdate && <CreateLocation
-				id={dataTest[0].id}
-				name={dataTest[0].name}
-				mobile={dataTest[0].mobile}
-				address={dataTest[0].address}
+			{User[0].isUpdate && <CreateLocation
+				id={User[0].id}
+				name={User[0].name}
+				mobile={User[0].mobile}
+				address={User[0].address}
 			/>}
-			{!dataTest[0].isUpdate && <CreateLocation
+			{!User[0].isUpdate && <CreateLocation
 				name={undefined}
 				mobile={undefined}
 				address={undefined}

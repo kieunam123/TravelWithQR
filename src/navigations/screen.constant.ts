@@ -4,7 +4,8 @@ const ScreenType = {
         Start: 'Start',
         Dashboard: 'Dash Board',
         Menu: 'Menu',
-        Tab: 'Tab'
+        Tab: 'Tab',
+        Login: 'Login',
     },
     Tab: {
         Home: 'Home',

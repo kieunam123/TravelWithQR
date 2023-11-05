@@ -1,5 +1,7 @@
 import CreateLocation from "./CreateLocation";
+import LocationItem from "./LocationItem";
 
 export {
-  CreateLocation
+  CreateLocation,
+  LocationItem
 }

@@ -5,7 +5,7 @@ import { Formik } from 'formik'
 import { Card } from '~/components/cards'
 import { Button, Input } from '~/components/commons'
 import Color from '~/configs/colors'
-import { ISampleObj } from '~/apis/types.service'
+import { IUser } from '~/apis/types.service'
 import { useDispatch } from 'react-redux'
 import MasterActions from '~/redux/master/master.actions'
 
@@ -18,7 +18,7 @@ export interface IProps {
 
 const CreateLocation: React.FC<IProps> = (props) => {
   const dispatch = useDispatch();
-  const sampleObj: ISampleObj = {
+  const sampleObj: IUser = {
     id: props.id,
     name: props.name ?? '',
     mobile: props.mobile ?? '',
@@ -30,10 +30,10 @@ const CreateLocation: React.FC<IProps> = (props) => {
       <Container style={{ flex: 1, paddingTop: 10 }}>
         <Formik
           initialValues={sampleObj}
-          onSubmit={(values: ISampleObj) => {
+          onSubmit={(values: IUser) => {
             values.id
-              ? dispatch(MasterActions.createTest(values))
-              : dispatch(MasterActions.updateDataTest(`${values.id}`, values))
+              ? dispatch(MasterActions.CreateUser(values))
+              : dispatch(MasterActions.updateUser(`${values.id}`, values))
             console.log(values);
           }}
         >

@@ -10,6 +10,8 @@ import { useIsFocused } from '@react-navigation/native'
 import { ISampleObj } from '~/apis/types.service'
 import { navigate } from '~/navigations'
 import ScreenType from '~/navigations/screen.constant'
+import { callApiGetWithToken } from '~/helpers/UtilitiesHelper'
+import { API_URL } from '~/configs/strings'
 
 const DashboardScreen = () => {
 	const isFocused = useIsFocused();
@@ -24,6 +26,7 @@ const DashboardScreen = () => {
 	const { dataTest } = useSelector((state: RootState) => state.master);
 	const handleGetData = useCallback(() => {
 		dispatch(MasterActions.getDataTest())
+		callApiGetWithToken
 	}, [dispatch]);
 
 	useEffect(() => {
@@ -31,6 +34,7 @@ const DashboardScreen = () => {
 			handleGetData()
 		}
 	}, [handleGetData, isFocused])
+
 
 	async function onPress(item: ISampleObj) {
 		Alert.alert('Select Action', '', [

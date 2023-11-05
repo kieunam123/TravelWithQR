@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Smart Travel",
-    "slug": "smarttravel",
+    "name": "Travel With QR",
+    "slug": "TravelWithQR",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -19,7 +19,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.kieunam123.smarttravel",
+      "bundleIdentifier": "com.kieunam123.travelwithqr",
       "buildNumber": "1",
       "infoPlist": {
         "NSFaceIDUsageDescription": "Cho phép ứng dụng sử dụng FaceID/TouchID để xác thực đăng nhập",
@@ -40,7 +40,7 @@
       "permissions": [
         "android.permission.FOREGROUND_SERVICE"
       ],
-      "package": "com.kieunam123.smarttravel",
+      "package": "com.kieunam123.travelwithqr",
       "versionCode": 1
     },
     "web": {

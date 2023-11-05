@@ -1,5 +1,5 @@
 
-export const API_URL = 'http://127.0.0.1:5001/cloudfunctions-1c323/us-central1/app/';
+export const API_URL = 'https://us-central1-travelwithqr.cloudfunctions.net/app';
 
 const AppString = {
   Common: {

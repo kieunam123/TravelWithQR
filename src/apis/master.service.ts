@@ -9,7 +9,7 @@ export const createTestData = async (
 ): Promise<IApiResponse> => {
   return postWithUrl<IApiResponse>(
     API_URL,
-    `api/create`,
+    `/api/create`,
     model,
   )
 };
@@ -19,8 +19,8 @@ export const getDataTest = async (
 ): Promise<IApiResponse> => {
   return getWithUrl<IApiResponse>(
     API_URL,
-    `api/userDetail`+(id ? '' : 's'),
-    id ? { id: id } : undefined,
+    `/api/userDetails`,
+    {id: id}
   )
 };
 
@@ -30,7 +30,7 @@ export const updateDataTest = async (
 ): Promise<IApiResponse> => {
   return putWithUrl<IApiResponse>(
     API_URL,
-    `api/update`,
+    `/api/update`,
     dataUpdate,
     { id: id },
   )
@@ -41,7 +41,7 @@ export const deleteDataTest = async (
 ): Promise<IApiResponse> => {
   return deleteWithUrl<IApiResponse>(
     API_URL,
-    `api/delete`,
+    `/api/deleteUser`,
     undefined,
     {id:id}
   )

@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
 		fontSize: scaleFactor(15),
 		textAlign: 'center',
 		letterSpacing: 1,
-		lineHeight: '25%'
+		lineHeight: 25
 
 	},
 	descriptionContainer: {

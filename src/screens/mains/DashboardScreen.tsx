@@ -26,7 +26,7 @@ const DashboardScreen = () => {
 	};
 	const dispatch = useDispatch();
 	const { User, locations, places } = useSelector((state: RootState) => state.master);
-
+	const { userParams } = useSelector((state: RootState) => state.global);
 	const handleGetLocation = useCallback(() => {
 		dispatch(MasterActions.getLocation())
 	}, [dispatch]);
@@ -54,11 +54,11 @@ const DashboardScreen = () => {
 	}
 
 	async function LocationOnPress(location: ILocation) {
-		Alert.alert(`selected ${location.name}`)
+		goToScreen(ScreenType.Detail.LocationDetail, {Location: location})
 	}
 
 	async function PlaceOnPress(place: ILocationPlace) {
-		alert(`Selected ${place.name}`)
+		goToScreen(ScreenType.Detail.PlaceDetail, {Place: place})
 	}
 
 	return (
@@ -67,7 +67,7 @@ const DashboardScreen = () => {
 				<View style={{ paddingBottom: scaleFactor(30), flexDirection: 'row', alignItems: 'center', justifyContent: "space-between" }}>
 					<View>
 						<Text style={styles.title}>Xin chào, </Text>
-						<TextCustom bold style={styles.title}>{"Kieu Nam"}</TextCustom>
+						<TextCustom bold style={styles.title}>{userParams.name}</TextCustom>
 					</View>
 					<View style={{ paddingHorizontal: scaleFactor(20) }}>
 						<Icon
@@ -92,7 +92,7 @@ const DashboardScreen = () => {
 								<LocationItem
 									title={item.name}
 									img={item.image_link[0] ?? ''}
-									short_description={item.short_description ?? `${item.city}, ${item.country}`}
+									short_description={`${item.city}, ${item.country}`}
 									description={item.description}
 									country={item.country}
 									onPress={() => PlaceOnPress(item)}
@@ -113,7 +113,7 @@ const DashboardScreen = () => {
 								<LocationItem
 									title={item.name}
 									img={item.image_links[0] ?? ''}
-									short_description={item.short_description}
+									short_description={`${item.country}`}
 									description={item.description}
 									country={item.country}
 									onPress={() => LocationOnPress(item)}

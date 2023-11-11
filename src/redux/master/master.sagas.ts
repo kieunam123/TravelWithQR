@@ -4,7 +4,9 @@ import { CreateUserData, deleteUser, getLocation, getUser, updateUser } from "~/
 import { IApiResponse, ILocation, ILocationPlace, IUser } from "~/apis/types.service";
 import GlobalActions from "../global/global.actions";
 import MasterActions from "./master.actions";
-import { safe } from "../saga.helpers";
+import { onSagaNavigate, safe } from "../saga.helpers";
+import { INavigateScreen } from "~/commons/types";
+import ScreenType from "~/navigations/screen.constant";
 
 //#region ================== WORKER ====================
 
@@ -14,7 +16,13 @@ function* handleCreateUser({ payload: IUser }: ICreateUser) {
     IUser
   );
   if (response.status === 'Success') {
-    yield put(GlobalActions.openErrorInfoModal(`Tạo data thành công`));
+    yield put(GlobalActions.openErrorInfoModal(`Đăng ký thành công`));
+    const nav: INavigateScreen = {
+      isNavigate: true,
+      screen: ScreenType.Main.Login,
+      param: {userRegistered: IUser}
+    }
+    onSagaNavigate(nav)
   } else {
     if(response.msg){
       yield put(GlobalActions.openErrorInfoModal(`Lỗi ${response.status}\nChi tiết: ${response.msg}`));

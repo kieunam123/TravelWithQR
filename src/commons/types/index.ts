@@ -51,13 +51,13 @@ export const DepartmentId = {
 };
 
 export interface IUserParams {
-  regionId?: string;
-  officeId?: number;
-  unitId?: string;
-  deptId?: number;
   userId: string;
-  fullName: string;
-  email?: string;
+  name: string;
+  phone: string;
+  address: string;
+  imgurl: string;
+  username: string;
+  password: string;
 }
 
 export interface INavigateScreen {

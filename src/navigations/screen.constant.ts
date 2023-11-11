@@ -6,6 +6,11 @@ const ScreenType = {
         Menu: 'Menu',
         Tab: 'Tab',
         Login: 'Login',
+        Register: 'Register'
+    },
+    Detail: {
+        LocationDetail: 'Location Detail',
+        PlaceDetail: 'Place Detail'
     },
     Tab: {
         Home: 'Home',

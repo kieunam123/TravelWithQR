@@ -9,7 +9,7 @@ export const CreateUserData = async (
 ): Promise<IApiResponse> => {
   return postWithUrl<IApiResponse>(
     API_URL,
-    `/api/create`,
+    `/api/createUser`,
     model,
   )
 };

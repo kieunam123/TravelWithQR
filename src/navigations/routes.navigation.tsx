@@ -13,8 +13,10 @@ import {
 	StartScreen,
 	DashboardScreen,
 	LoginScreen,
+	RegisterScreen,
 } from '../screens/mains';
 import BottomTabNavigator from './bottomTabs/bottomtab.navigation';
+import { LocationDetail, PlaceDetail } from '~/screens/details';
 
 const Stack = createStackNavigator();
 
@@ -35,6 +37,10 @@ const RoutesNavigatorContainer = (): any => {
 						<Stack.Screen name={ScreenType.Main.Tab} component={BottomTabNavigator} options={{gestureEnabled: true}}/>
 						<Stack.Screen name={ScreenType.Main.Start} component={StartScreen}/>
 						<Stack.Screen name={ScreenType.Main.Login} component={LoginScreen}/>
+						<Stack.Screen name={ScreenType.Main.Register} component={RegisterScreen}/>
+						<Stack.Screen name={ScreenType.Detail.LocationDetail} component={LocationDetail}/>
+						<Stack.Screen name={ScreenType.Detail.PlaceDetail} component={PlaceDetail}/>
+
 						{/* <Stack.Screen name={ScreenType.Main.Dashboard} component={DashboardScreen}/> */}
 
 				</Stack.Navigator>

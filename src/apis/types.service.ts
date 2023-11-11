@@ -80,6 +80,9 @@ export interface IUser {
   address: string;
   id?: number;
   isUpdate?: boolean;
+  username: string;
+  password: string;
+  imgurl?: string;
 }
 
 //#end

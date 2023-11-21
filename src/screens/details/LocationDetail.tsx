@@ -1,10 +1,12 @@
 import { Dimensions, FlatList, Image, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { FlatListCommon, Icon, SafeView, TextCustom } from '~/components/commons'
-import { Header } from '~/components/sections'
+import { Header, Row } from '~/components/sections'
 import { Colors } from '~/configs'
 import { scaleFactor } from '~/helpers/UtilitiesHelper'
 import imgs from '~/assets/imgs'
+import { LocationItem } from '~/containers/master'
+import { ILocationPlace } from '~/apis/types.service'
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const LocationDetail = ({ route }) => {
@@ -18,6 +20,36 @@ const LocationDetail = ({ route }) => {
     return chunkArray(imageUrlArray, 3)
   }
 
+  const starcomponent = (rating: number): JSX.Element => {
+    const stars: JSX.Element[] = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <Icon
+          key={i}
+          type='MaterialIcons'
+          name={i <= fullStars ? 'star' : 'star-border'}
+          color={Colors.Yellow}
+          size={scaleFactor(19)}
+        />
+      );
+    }
+    if (hasHalfStar) {
+      stars[Math.floor(rating)] = (
+        <Icon
+          key={Math.ceil(rating)}
+          type='MaterialIcons'
+          name='star-half'
+          color={Colors.Yellow}
+          size={scaleFactor(19)}
+        />
+      );
+    }
+    return <View style={{ flexDirection: 'row' }}>{stars}</View>;
+  };
+
+
   return (
     <SafeView>
       {Location && <>
@@ -26,7 +58,7 @@ const LocationDetail = ({ route }) => {
           <View style={styles.headerContainer}>
             <View style={styles.ImgContainer}>
               <Image
-                source={imgs.background_img1}
+                source={{ uri: Location.image_links[0] }}
                 style={{ height: SCREEN_HEIGHT * 0.8, width: SCREEN_WIDTH }}
               />
             </View>
@@ -37,7 +69,8 @@ const LocationDetail = ({ route }) => {
                 {Location.name}
               </Text>
               <View style={styles.ratingContainer}>
-                <Text>Stars & rating</Text>
+                {starcomponent(Location.rate)}
+                <TextCustom isSmall>{`${Location.rate} stars`}</TextCustom>
               </View>
             </View>
             <View style={styles.LocationDetail}>
@@ -49,10 +82,10 @@ const LocationDetail = ({ route }) => {
                 />
                 <TextCustom isSmall bold style={{ paddingHorizontal: 5 }}>{Location.country}</TextCustom>
               </View>
-              <TextCustom style={{fontSize: 15}}>{Location.description}</TextCustom>
+              <TextCustom style={{ fontSize: 15 }}>{Location.description}</TextCustom>
             </View>
             <View style={styles.LocationPhoto}>
-              <Text style={{ fontSize: 18, fontWeight: 'bold', paddingBottom: 10 }}>PHOTOS</Text>
+              <Text style={{ fontSize: 18, fontWeight: 'bold', paddingBottom: 10 }}>ẢNH</Text>
               {Location.image_links[0] !== undefined && <View style={styles.PhotoContainer}>
                 {imageRows(Location.image_links).map((item, index) => {
                   return (
@@ -62,7 +95,7 @@ const LocationDetail = ({ route }) => {
                           <Image
                             source={{ uri: imgUrl }}
                             resizeMode='cover'
-                            style={{width: 100, height: 100, borderRadius: 5}}
+                            style={{ width: 100, height: 100, borderRadius: 5 }}
                           />
                         </View>
                       ))}
@@ -71,6 +104,27 @@ const LocationDetail = ({ route }) => {
                 })}
               </View>}
             </View>
+            {Location.places[0] !== undefined && <View style={styles.placesToVisit}>
+              <Text style={{ fontSize: 18, fontWeight: 'bold', paddingBottom: 10 }}>ĐỊA ĐIỂM THAM QUAN</Text>
+              <FlatListCommon
+                onRefresh={() => { }}
+                isShowVertical={false}
+                horizontal
+                data={Location.places.sort((a, b) => b.rating - a.rating)}
+                renderItem={({ item }: { item: ILocationPlace }) => (
+                  <View style={{ paddingHorizontal: 5 }}>
+                    <LocationItem
+                      title={item.name}
+                      img={item.image_link[0] ?? ''}
+                      rating={item.rating}
+                      description={item.description}
+                      country={item.country}
+                      onPress={() => { }}
+                    />
+                  </View>
+                )}
+              />
+            </View>}
           </View>
 
         </ScrollView>
@@ -120,7 +174,8 @@ const styles = StyleSheet.create({
 
   },
   ratingContainer: {
-
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   LocationDetail: {
     // paddingVertical: 25
@@ -141,5 +196,8 @@ const styles = StyleSheet.create({
     flex: 1,
     // borderRadius: 25
     // aspectRatio: 1,
+  },
+  placesToVisit: {
+    paddingVertical: 25,
   }
 })

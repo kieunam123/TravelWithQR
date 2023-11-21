@@ -16,7 +16,7 @@ const BottomTabNavigator = () => {
       case 'Search':
         return <Icon type='Entypo' name={'magnifying-glass'} size={size} color={color} />;
       case 'Scan QR':
-        return <Icon type='MaterialCommunityIcons' name={'qrcode-scan'} size={scaleFactor(30)} color={color} />;
+        return <Icon type='MaterialCommunityIcons' name={'qrcode-scan'} size={scaleFactor(35)} color={color} />;
       case 'Notification':
         return <Icon type='MaterialCommunityIcons' name={'bell-outline'} size={size} color={color} />;
       case 'Settings':
@@ -28,11 +28,11 @@ const BottomTabNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        tabBarStyle: { height: scaleFactor(80) },
+        tabBarStyle: { height: scaleFactor(60) },
         tabBarActiveTintColor: 'blue',
         tabBarInactiveTintColor: 'grey',
         tabBarIcon: ({ focused, color, size }) => {
-          return getIcon(route.name, focused, color, size);
+          return getIcon(route.name, focused, color, 30);
         },
       })}
     >

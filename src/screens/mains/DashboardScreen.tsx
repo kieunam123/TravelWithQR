@@ -64,7 +64,7 @@ const DashboardScreen = () => {
 	return (
 		<ScrollView>
 			<View style={styles.container}>
-				<View style={{ paddingBottom: scaleFactor(30), flexDirection: 'row', alignItems: 'center', justifyContent: "space-between" }}>
+				<View style={{ paddingBottom: scaleFactor(30), flexDirection: 'row', alignItems: 'center', justifyContent: "space-between", padding: 10 }}>
 					<View>
 						<Text style={styles.title}>Xin chào, </Text>
 						<TextCustom bold style={styles.title}>{userParams.name}</TextCustom>
@@ -77,7 +77,6 @@ const DashboardScreen = () => {
 							size={scaleFactor(75)}
 						/>
 					</View>
-
 				</View>
 				<View>
 					<Text style={styles.title2}>Dành cho bạn</Text>

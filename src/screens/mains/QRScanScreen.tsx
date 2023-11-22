@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Alert, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Header } from '~/components/sections'
+import { Header, SearchBox2 } from '~/components/sections'
 import { FlatListCommon, PrintButton, SafeView } from '~/components/commons'
 import { CreateLocation, LocationItemAdmin } from '~/containers/master'
 import { useIsFocused, useNavigation } from '@react-navigation/native'
@@ -74,6 +74,15 @@ const QRScanScreen = () => {
 			</View>}
 			{!isScanQR && <View style={styles.container}>
 				{userParams.username === 'admin' && <>
+					<View style={{padding:10, marginTop:-20}}>
+						<SearchBox2
+							placeholder={'Tìm kiếm địa điểm'}
+							dataSource={[]}
+							accessor={'key'}
+							stringtext={() => { }}
+						/>
+					</View>
+
 					<FlatListCommon
 						onRefresh={() => { }}
 						isShowVertical={true}
@@ -105,7 +114,7 @@ export default QRScanScreen
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingVertical: 10
+		// paddingVertical: 10
 		// justifyContent: 'center',
 		// alignItems: 'center'
 	},

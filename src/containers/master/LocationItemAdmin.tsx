@@ -29,7 +29,7 @@ const LocationItemAdmin: React.FC<IProps> = (props) => {
             // borderTopWidth: 0.5,
             borderWidth: 0.5,
             padding: 10,
-            borderRadius: 15,
+            borderRadius: 8,
             backgroundColor: 'white'
           }}>
           <View
@@ -47,7 +47,7 @@ const LocationItemAdmin: React.FC<IProps> = (props) => {
           </View>
           <View style={{ flex: 2 }}>
             <View style={styles.rowItem}>
-              <TextCustom style={{ fontSize: 12 }}>ID</TextCustom>
+              <TextCustom style={{ fontSize: 12 }}>Location ID</TextCustom>
               <TextCustom style={styles.rowText}>{props.id}</TextCustom>
             </View>
             <View style={styles.rowItem}>

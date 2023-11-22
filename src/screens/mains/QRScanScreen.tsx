@@ -1,42 +1,102 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, Alert, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Header } from '~/components/sections'
-import { SafeView } from '~/components/commons'
-import { CreateLocation } from '~/containers/master'
+import { FlatListCommon, PrintButton, SafeView } from '~/components/commons'
+import { CreateLocation, LocationItemAdmin } from '~/containers/master'
 import { useIsFocused, useNavigation } from '@react-navigation/native'
 import ScreenType from '~/navigations/screen.constant'
 import { useDispatch, useSelector } from 'react-redux'
 import MasterActions from '~/redux/master/master.actions'
 import { RootState } from '~/redux/reducers'
+import { BarCodeScanner } from 'expo-barcode-scanner'
+import * as ImagePicker from 'expo-image-picker';
+import icons from '~/assets/icons'
+import { goToScreen, scaleFactor } from '~/helpers/UtilitiesHelper'
+import { ILocation } from '~/apis/types.service'
 
-const QRScanScreen = ({ route }) => {
+const QRScanScreen = () => {
+	const { locations } = useSelector((state: RootState) => state.master);
+	const { userParams } = useSelector((state: RootState) => state.global);
 	const isFocused = useIsFocused();
-	const dispatch = useDispatch();
-	const { User } = useSelector((state: RootState) => state.master);
+	const [isScanQR, setIsScanQR] = useState<boolean>(false);
+
+	const camera = async () => {
+		const { status } = await BarCodeScanner.requestPermissionsAsync();
+		const grantedCamera = await ImagePicker.getCameraPermissionsAsync();
+		const granted = await ImagePicker.requestCameraPermissionsAsync();
+		(status !== 'granted' && grantedCamera.status !== "granted" && granted.status !== 'granted') ? Alert.alert('Vui lòng cấp quyền truy cập Camera!', '', [{ text: 'OK', style: 'cancel' }]) : (setIsScanQR(true));
+	};
+
+	const handleScanQR = ({ data }) => {
+		let item: string = data;
+		let locationFound: ILocation | undefined
+		if (item !== undefined) {
+			setIsScanQR(false);
+			for (let i = 0; i < locations.length; i += 1) {
+				const location = locations.find((p) => `${p.id}` === item);
+				if (location) {
+					locationFound = location
+				}
+			}
+			return locationFound !== undefined ? goToScreen(ScreenType.Detail.LocationDetail, { Location: locationFound }) : null
+		}
+	};
 
 	useEffect(() => {
-		if (isFocused) {
-
+		if (isFocused && userParams.username !== 'admin') {
+			camera();
 		} else {
-			dispatch(MasterActions.getUserSuccess([{ name: '', mobile: '', address: '', id: undefined, isUpdate: false }]))
+			setIsScanQR(false)
 		}
 	}, [isFocused])
 
+	const OnLocationPress = (item: ILocation) => {
+		Alert.alert(`${item.name}`, `Vui lòng lựa chọn hành động`, [
+			{ text: 'Cập nhật', onPress: () => { } },
+			{ text: 'Xoá', onPress: () => { } },
+			{ text: 'Huỷ bỏ', onPress: () => { } }
+		])
+	}
+
 	return (
-		<View style={styles.container}>
-			{/* <Text style={styles.text}>QR Screen</Text> */}
-			{User[0].isUpdate && <CreateLocation
-				id={User[0].id}
-				name={User[0].name}
-				mobile={User[0].mobile}
-				address={User[0].address}
-			/>}
-			{!User[0].isUpdate && <CreateLocation
-				name={undefined}
-				mobile={undefined}
-				address={undefined}
-			/>}
-		</View>
+		<SafeView>
+			{isScanQR && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+				<View style={{ flex: .1 }} />
+				<Image
+					source={icons.qr_scanning}
+					style={{ width: scaleFactor(350), height: scaleFactor(350), alignSelf: 'center', overflow: 'hidden', position: 'absolute' }}
+				/>
+				<BarCodeScanner
+					style={{ ...StyleSheet.absoluteFillObject, zIndex: -1, overflow: 'hidden' }}
+					onBarCodeScanned={handleScanQR}
+				/>
+				<View style={{ flex: 1 }} />
+			</View>}
+			{!isScanQR && <View style={styles.container}>
+				{userParams.username === 'admin' && <>
+					<FlatListCommon
+						onRefresh={() => { }}
+						isShowVertical={true}
+						data={locations}
+						renderItem={({ item }: { item: ILocation }) => (
+							<LocationItemAdmin
+								name={item.name}
+								img={item.image_links}
+								country={item.country}
+								category={item.category}
+								date_created={item.date_created}
+								date_updated={item.date_updated}
+								id={item.id}
+								short_description={item.short_description ?? ''}
+								onPress={() => OnLocationPress(item)}
+							/>
+						)}
+					/>
+					<PrintButton style={{ bottom: scaleFactor(125) }} onPress={() => { }} iconName='export' iconType='Entypo' />
+					<PrintButton style={{ bottom: scaleFactor(50) }} onPress={() => { }} iconName='plus' iconType='AntDesign' />
+				</>}
+			</View>}
+		</SafeView>
 	)
 }
 
@@ -45,6 +105,7 @@ export default QRScanScreen
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		paddingVertical: 10
 		// justifyContent: 'center',
 		// alignItems: 'center'
 	},

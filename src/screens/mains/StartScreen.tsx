@@ -3,13 +3,11 @@ import React from 'react'
 import { Icon, SafeView } from '~/components/commons'
 import { Header } from '~/components/sections'
 import imgs from '~/assets/imgs'
-import { scaleFactor } from '~/helpers/UtilitiesHelper'
+import { goToScreen, scaleFactor } from '~/helpers/UtilitiesHelper'
 import { Colors, fonts } from '~/configs'
-import { useNavigation } from '@react-navigation/native'
 import ScreenType from '~/navigations/screen.constant'
 
 const StartScreen = () => {
-	const navigation = useNavigation();
 	const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window')
 	return (
 		<SafeView>
@@ -30,7 +28,7 @@ const StartScreen = () => {
 					<Text style={styles.text}>Travel With QR</Text>
 					<View style={styles.descriptionContainer}>
 						<Text style={styles.descriptionText} >{'Explore every place with a QR scan\nBegin the journey now'}</Text>
-						<TouchableOpacity style={styles.button} onPress={() => navigation.navigate(ScreenType.Main.Login)}>
+						<TouchableOpacity style={styles.button} onPress={() => goToScreen(ScreenType.Main.Login)}>
 							<View style={styles.circle}>
 								<Icon type='AntDesign' name="right" size={24} color="white" />
 							</View>
@@ -90,7 +88,7 @@ const styles = StyleSheet.create({
 		fontSize: scaleFactor(55),
 		color: 'white',
 		letterSpacing: 2,
-		fontWeight:'450'
+		fontWeight:'400'
 	},
 
 	descriptionText: {

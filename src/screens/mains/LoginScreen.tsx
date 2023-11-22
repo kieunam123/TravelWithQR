@@ -9,7 +9,7 @@ import imgs from '~/assets/imgs';
 import { Icon, TextCustom } from '~/components/commons';
 import { Header } from '~/components/sections';
 import Color from '~/configs/colors';
-import { scaleFactor } from '~/helpers/UtilitiesHelper';
+import { goToScreen, scaleFactor } from '~/helpers/UtilitiesHelper';
 import ScreenType from '~/navigations/screen.constant';
 import GlobalActions from '~/redux/global/global.actions';
 import MasterActions from '~/redux/master/master.actions';
@@ -79,7 +79,7 @@ const LoginScreen = ({ route }) => {
       }
     }
     if (isFound) {
-      navigation.navigate(ScreenType.Main.Tab)
+      goToScreen(ScreenType.Main.Tab)
     } else {
       alert('Tên đăng nhập hoặc mật khẩu bị sai')
     }
@@ -89,9 +89,6 @@ const LoginScreen = ({ route }) => {
     <>
       <Header title='Đăng nhập' isMenu={false} disableThreeDot />
       <View style={styles.container}>
-        {/* Background Image or any travel-themed design */}
-        {/* Replace 'BackgroundComponent' with your background design component */}
-
         <ImageBackground
           source={imgs.background_img1}
           style={{ flex: 1, width: SCREEN_WIDTH, justifyContent: 'center' }}
@@ -133,7 +130,7 @@ const LoginScreen = ({ route }) => {
             <View style={{ paddingTop: scaleFactor(15), flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
               <Text style={{ color: 'white', fontSize: 16 }}>Chưa có tài khoản? Vui lòng </Text>
               <Pressable onPress={() => {
-                navigation.navigate(ScreenType.Main.Register)
+                goToScreen(ScreenType.Main.Register)
               }}>
                 <TextCustom bold style={{ color: '#7a62fe', fontSize: 20 }}>Đăng ký</TextCustom>
               </Pressable>

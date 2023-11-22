@@ -22,6 +22,7 @@ const icons = {
   support: require('./support.png'),
   qrscanin: require('./qrscanin_green.png'),
   qrscanout: require('./qrscanout_red.png'),
+  qr_scanning: require('./qr_scanning.png'),
 };
 
 export default icons;

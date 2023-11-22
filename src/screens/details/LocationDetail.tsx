@@ -1,16 +1,22 @@
 import { Dimensions, FlatList, Image, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import { FlatListCommon, Icon, SafeView, TextCustom } from '~/components/commons'
-import { Header, Row } from '~/components/sections'
+import React, { useRef, useState } from 'react'
+import { Button, FlatListCommon, Icon, ModalCommon, PrintButton, SafeView, TextCustom } from '~/components/commons'
+import { Container, Header, Row } from '~/components/sections'
 import { Colors } from '~/configs'
 import { scaleFactor } from '~/helpers/UtilitiesHelper'
 import imgs from '~/assets/imgs'
 import { LocationItem } from '~/containers/master'
 import { ILocationPlace } from '~/apis/types.service'
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+import QRCode from "react-native-qrcode-svg";
+import { Svg } from 'react-native-svg';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 const LocationDetail = ({ route }) => {
   const { Location } = route.params ?? '';
+  let svg = useRef<Svg>(null);
+  const [showQRCode, setShowQRCode] = useState<boolean>(false);
   function chunkArray<T>(array: T[], size: number): T[][] {
     return Array.from({ length: Math.ceil(array.length / size) }, (_, index) =>
       array.slice(index * size, index * size + size)
@@ -48,6 +54,21 @@ const LocationDetail = ({ route }) => {
     }
     return <View style={{ flexDirection: 'row' }}>{stars}</View>;
   };
+
+  const getDataURL = () => {
+    // @ts-ignore
+    svg.current?.toDataURL(callback);
+  };
+
+  async function callback(dataURL: string) {
+    const filename = FileSystem.documentDirectory + (`${Location.id}.jpeg`);
+    FileSystem.writeAsStringAsync(filename, dataURL, {
+      encoding: FileSystem.EncodingType.Base64
+    }).then(() => {
+      Sharing.shareAsync(filename);
+    });
+    // console.log(dataURL);
+  }
 
 
   return (
@@ -128,6 +149,25 @@ const LocationDetail = ({ route }) => {
           </View>
 
         </ScrollView>
+        <ModalCommon isVisible={showQRCode} title='Mã QR Địa Điểm' onClose={() => setShowQRCode(false)}>
+          <View style={{ height: SCREEN_HEIGHT * 0.4 }}>
+            <Container bgColor='white' style={{ paddingHorizontal: 0 }}>
+              <View style={{ flex: 1, paddingVertical: 10, justifyContent: 'center', alignItems:'center' }}>
+                  <QRCode size={scaleFactor(180)} value={`${Location.id}`} getRef={(c:any) => (svg.current = c)} />
+              </View>
+              <Row style={{}}>
+                <Button
+                  title='Xuất Mã QR'
+                  radius={10}
+                  color='white'
+                  onPress={() => getDataURL()}
+                />
+              </Row>
+            </Container>
+          </View>
+        </ModalCommon>
+        <PrintButton style={{ bottom: scaleFactor(50) }} onPress={() => setShowQRCode(true)} iconName='qrcode-scan' iconType='MaterialCommunityIcons' />
+
       </>}
     </SafeView>
   )

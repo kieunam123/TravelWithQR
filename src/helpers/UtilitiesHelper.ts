@@ -2,6 +2,7 @@ import {Platform, Dimensions} from 'react-native';
 import { ISearchCommon } from '../apis/types.service';
 import numeral from 'numeral';
 import { getAccessToken } from './AsyncStorageHelpers';
+import { navigate } from '~/navigations';
 
 const {width, height} = Dimensions.get('window');
 
@@ -190,6 +191,14 @@ export const getDistanceFromUserToFarm = (latUser:number, longUser:number, latFa
   
   return d;
 } 
+
+export const goToScreen = (
+  screenType: string,
+  params?: any,
+): void => {
+  const nav = screenType;
+  navigate(nav, params);
+};
 
 function deg2rad(deg:number) {
   return deg * (Math.PI / 180);

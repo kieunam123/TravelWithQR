@@ -4,11 +4,14 @@ import { NavigationContainer } from '@react-navigation/native';
 import { Icon } from '~/components/commons';
 import ScreenType from '../screen.constant';
 import { DashboardScreen, NotificationScreen, QRScanScreen, SearchScreen, SettingScreen } from '~/screens/mains';
-import { scaleFactor } from '~/helpers/UtilitiesHelper';
+import { isIos, scaleFactor } from '~/helpers/UtilitiesHelper';
+import { useSelector } from 'react-redux';
+import { RootState } from '~/redux/reducers';
 
 const Tab = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {
+  const { userParams } = useSelector((state: RootState) => state.global);
   const getIcon = (routeName: string, focused: boolean, color: string, size: number) => {
     switch (routeName) {
       case 'Home':
@@ -17,6 +20,8 @@ const BottomTabNavigator = () => {
         return <Icon type='Entypo' name={'magnifying-glass'} size={size} color={color} />;
       case 'Scan QR':
         return <Icon type='MaterialCommunityIcons' name={'qrcode-scan'} size={scaleFactor(35)} color={color} />;
+      case 'Locations':
+        return <Icon type='Entypo' name={'location'} size={scaleFactor(35)} color={color} />;
       case 'Notification':
         return <Icon type='MaterialCommunityIcons' name={'bell-outline'} size={size} color={color} />;
       case 'Settings':
@@ -28,7 +33,7 @@ const BottomTabNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        tabBarStyle: { height: scaleFactor(60) },
+        tabBarStyle: { height: isIos() ? 100 : scaleFactor(60) },
         tabBarActiveTintColor: 'blue',
         tabBarInactiveTintColor: 'grey',
         tabBarIcon: ({ focused, color, size }) => {
@@ -38,7 +43,7 @@ const BottomTabNavigator = () => {
     >
       <Tab.Screen name={ScreenType.Tab.Home} component={DashboardScreen} />
       <Tab.Screen name={ScreenType.Tab.Search} component={SearchScreen} />
-      <Tab.Screen name={ScreenType.Tab.ScanQR} component={QRScanScreen} />
+      <Tab.Screen name={userParams.username === 'admin' ? 'Locations' : ScreenType.Tab.ScanQR} component={QRScanScreen} />
       <Tab.Screen name={ScreenType.Tab.Notification} component={NotificationScreen} />
       <Tab.Screen name={ScreenType.Tab.Setting} component={SettingScreen} />
 

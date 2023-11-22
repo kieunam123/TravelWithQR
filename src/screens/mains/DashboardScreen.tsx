@@ -1,4 +1,4 @@
-import { Alert, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
 import React, { useCallback, useEffect } from 'react'
 import { Container, Header } from '~/components/sections'
 import { FlatListCommon, Icon, SafeView, TextCustom } from '~/components/commons'
@@ -25,7 +25,7 @@ const DashboardScreen = () => {
 		navigate(nav, params);
 	};
 	const dispatch = useDispatch();
-	const { User, locations, places } = useSelector((state: RootState) => state.master);
+	const { locations, places } = useSelector((state: RootState) => state.master);
 	const { userParams } = useSelector((state: RootState) => state.global);
 	const handleGetLocation = useCallback(() => {
 		dispatch(MasterActions.getLocation())
@@ -70,12 +70,13 @@ const DashboardScreen = () => {
 						<TextCustom bold style={styles.title}>{userParams.name}</TextCustom>
 					</View>
 					<View style={{ paddingHorizontal: scaleFactor(20) }}>
-						<Icon
+						{userParams.imgurl === '' &&<Icon
 							type="FontAwesome"
 							name="user-circle-o"
 							color={Colors.GRAY}
 							size={scaleFactor(75)}
-						/>
+						/>}
+						{userParams.imgurl !== '' && <Image source={{uri: userParams.imgurl}} resizeMode='contain' style={{width:100,height:100}} />}
 					</View>
 				</View>
 				<View>

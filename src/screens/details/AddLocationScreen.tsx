@@ -1,5 +1,5 @@
 import { Dimensions, Image, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { FlatListCommon, Icon, Input, SafeView, TextCustom } from '~/components/commons';
 import { Column, Header, Row } from '~/components/sections';
 import { Colors, Sizes, fonts } from '~/configs';
@@ -8,11 +8,12 @@ import icons from '~/assets/icons';
 import { Formik } from 'formik';
 import { ILocation } from '~/apis/types.service';
 import { ImageUpload } from '~/containers/master';
+import Loading2 from '~/containers/Loading2';
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const AddLocationScreen = ({ route }) => {
   const { Location, type } = route.params ?? '';
-
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   function chunkArray<T>(array: T[], size: number): T[][] {
     return Array.from({ length: Math.ceil(array.length / size) }, (_, index) =>
       array.slice(index * size, index * size + size)
@@ -58,7 +59,7 @@ const AddLocationScreen = ({ route }) => {
     date_created: Location?.date_created ?? '',
     date_updated: Location?.date_updated ?? '',
     name: Location?.name ?? '',
-    rate: Location?.rate ?? 0,
+    rate: Location?.rate ?? '',
     image_links: Location?.image_links ?? [],
     places: Location?.places ?? [],
   };
@@ -67,11 +68,13 @@ const AddLocationScreen = ({ route }) => {
     <Formik
       initialValues={locationObj}
       onSubmit={(values) => {
-        //
-      }}>{({ values, handleSubmit }) => {
+        console.log(JSON.stringify(values,undefined,2));
+        
+      }}>{({ values, handleSubmit, setFieldValue }) => {
         return (
           <>
             <SafeView>
+              <Loading2 text='Vui lòng đợi giây lát...' isVisible={isLoading} />
               <Header title={type === 'add' ? 'Thêm địa điểm' : `${values.name}`} disableThreeDot isMenu={false} />
               <ScrollView>
                 <View style={styles.headerContainer}>
@@ -118,28 +121,28 @@ const AddLocationScreen = ({ route }) => {
                       />
                       <Input isNoLabel name='country' value={values.country} label='Nhập quốc gia' textInputStyle={{ color: Colors.GRAY_LIGHT, fontSize: Sizes.Note, fontFamily: fonts.RobotoItalic, paddingHorizontal: 5 }} />
                     </View>
+                    <View style={styles.LocationPin}>
+                      <Icon
+                        type='MaterialCommunityIcons'
+                        name='airplane-marker'
+                        size={scaleFactor(25)}
+                      />
+                      <Input isNoLabel name='category' value={values.category} label='Nhập loại địa điểm' textInputStyle={{ color: Colors.GRAY_LIGHT, fontSize: Sizes.Note, fontFamily: fonts.RobotoItalic, paddingHorizontal: 5 }} />
+                    </View>
                     <Input multiline isNoLabel name='description' value={values.description} label='Nhập mô tả...' textInputStyle={{ fontSize: 15 }} />
                   </View>
                   <View style={styles.LocationPhoto}>
                     <Text style={{ fontSize: 18, fontWeight: 'bold', paddingBottom: 10 }}>ẢNH</Text>
-                    {/* {Location.image_links[0] !== undefined && <View style={styles.PhotoContainer}>
-                    {imageRows(Location.image_links).map((item, index) => {
-                      return (
-                        <View style={{ flexDirection: 'row', padding: 5 }} key={index}>
-                          {item.map((imgUrl, columnIndex) => (
-                            <View key={columnIndex} style={styles.Images}>
-                              <Image
-                                source={{ uri: imgUrl }}
-                                resizeMode='cover'
-                                style={{ width: 100, height: 100, borderRadius: 5 }}
-                              />
-                            </View>
-                          ))}
-                        </View>
-                      )
-                    })}
-                  </View>} */}
-                    <ImageUpload images={values.image_links} onImageUpload={(image)=>{}} />
+                    <ImageUpload
+                      images={values.image_links}
+                      onImageUpload={(status) => setIsLoading(status)}
+                      onImageUploadComplete={(newlist) => setFieldValue('image_links', newlist)}
+                      onDeleteImage={(index) => {
+                        let updateImages = [...values.image_links]
+                        updateImages.splice(index, 1);              
+                        setFieldValue('image_links', updateImages);                                 
+                      }}
+                    />
                   </View>
                   {/* {Location.places[0] !== undefined && <View style={styles.placesToVisit}>
                 <Text style={{ fontSize: 18, fontWeight: 'bold', paddingBottom: 10 }}>ĐỊA ĐIỂM THAM QUAN</Text>
@@ -168,7 +171,7 @@ const AddLocationScreen = ({ route }) => {
               <View style={{ backgroundColor: Colors.SUCCESS, borderColor: Colors.BORDER_TWO, borderWidth: 1, alignItems: 'center' }}>
                 <Row>
                   <Column>
-                    <Pressable onPress={() => { }} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, flexDirection: 'row' }}>
+                    <Pressable onPress={() => handleSubmit()} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, flexDirection: 'row' }}>
                       <TextCustom bold style={{ fontSize: Sizes.Title, marginTop: 5, color: 'white', paddingRight: 10 }}>
                         {type === 'add' ? 'TẠO' : 'CẬP NHẬT'}
                       </TextCustom>

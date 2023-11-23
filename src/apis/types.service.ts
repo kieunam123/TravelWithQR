@@ -35,6 +35,22 @@ export interface ILocation {
   places: ILocationPlace[];
 }
 
+export interface IImgurResult {
+  data: IImgurData;
+  success: boolean;
+  status: number;
+}
+
+export interface IImgurData {
+  link: string;
+  id?: string;
+  type?: string;
+  width?: number;
+  height?: number;
+  size?: number;
+  name?: string;
+}
+
 export interface ILocationPlace {
   address: string;
   image_link: string[];

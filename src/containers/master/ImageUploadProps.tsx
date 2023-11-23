@@ -1,40 +1,78 @@
 import React, { useState } from 'react';
-import { View, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { View, Image, TouchableOpacity, StyleSheet, Dimensions, Alert } from 'react-native';
 import icons from '~/assets/icons';
 import imgs from '~/assets/imgs';
 import { Icon } from '~/components/commons';
 import Color from '~/configs/colors';
-// import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from 'expo-image-picker';
+import { callApiPostWithToken } from '~/helpers/UtilitiesHelper';
+import { IMGUR_ACCESSTOKEN, IMGUR_API } from '~/configs/strings';
+import { IImgurResult } from '~/apis/types.service';
 
 interface ImageUploadProps {
   images: string[];
-  onImageUpload: (image: string) => void;
+  onImageUpload: (status: boolean) => void;
+  onImageUploadComplete: (newlist: string[]) => void;
+  onDeleteImage: (index: number) => void;
 }
 
-const ImageUpload: React.FC<ImageUploadProps> = ({ images, onImageUpload }) => {
+const ImageUpload: React.FC<ImageUploadProps> = ({ images, onImageUpload, onImageUploadComplete, onDeleteImage }) => {
+  let imagelist: string[] = images
+
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Vui lòng cấp quyền truy cập thư viện!!');
+      return;
+    }
+    onImageUpload(true);
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      base64: true,
+    });
+    if (!result.canceled) {
+      const response: IImgurResult = await callApiPostWithToken(
+        IMGUR_API,
+        '',
+        { image: result.assets[0].base64 ?? '' },
+        `Client-ID ${IMGUR_ACCESSTOKEN}`
+      );
+      if (response.success) {
+        imagelist.push(response.data.link)
+        onImageUploadComplete(imagelist)
+      } else {
+        alert(`Không thể tải ảnh lên host. status ${response.status}`);
+      }
+    }
+    onImageUpload(false);
+  };
 
   const renderImageGrid = () => {
-    const emptySlots = images.length % 3 !== 0 ? 3 - (images.length % 3) : 0;
-
     return (
       <>
         {images.map((image, index) => (
           <View key={index} style={styles.imageContainer}>
-            <Image source={{ uri: image }} style={styles.image} />
+            <TouchableOpacity onLongPress={() => {
+              Alert.alert('Xác nhận thao tác', 'Bạn muốn xoá hình ảnh này?', [
+                {text: 'Xoá', onPress:()=>onDeleteImage(index)},
+                {text: 'Huỷ bỏ', onPress:()=>{}}
+              ])
+              }}>
+              <Image source={{ uri: image }} style={styles.image} />
+            </TouchableOpacity>
             {index === images.length - 1 && (
-              <TouchableOpacity onPress={()=>{}} style={{}}>
+              <TouchableOpacity onPress={pickImage} style={{}}>
                 <Image source={icons.addImg} style={styles.image} />
               </TouchableOpacity>
             )}
           </View>
         ))}
-        {Array.from({ length: emptySlots }).map((_, index) => (
-          <View key={`empty-${index}`} style={styles.imageContainer}>
-            <TouchableOpacity onPress={()=>{}} style={{}}>
-              <Image source={icons.addImg} style={styles.image} />
-            </TouchableOpacity>
-          </View>
-        ))}
+        {!images[0] && <View style={styles.imageContainer}>
+          <TouchableOpacity onPress={pickImage} style={{}}>
+            <Image source={icons.addImg} style={styles.image} />
+          </TouchableOpacity>
+        </View>}
       </>
     );
   };

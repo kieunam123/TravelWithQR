@@ -146,6 +146,10 @@ const styles = StyleSheet.create({
     color: Colors.GRAY,
     flex: 1,
   },
+  inputFormNoLabel: {
+    fontFamily: fonts.RobotoRegular,
+    fontSize: Sizes.Content,
+  },
   inputPlaceholder: {
     color: Colors.GRAY_LIGHT,
     fontSize: Sizes.Note,

@@ -58,6 +58,7 @@ export interface IUserParams {
   imgurl: string;
   username: string;
   password: string;
+  usertype: string;
 }
 
 export interface INavigateScreen {

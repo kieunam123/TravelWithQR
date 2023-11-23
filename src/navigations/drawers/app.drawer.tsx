@@ -17,7 +17,7 @@ import { FROM_DATE, TO_DATE } from './../../configs/initializeVariable';
 const AppDrawer = (): JSX.Element => {
 	const dispatch = useDispatch();
 	const {
-		userParams: { deptId, email, userId, regionId },
+		// userParams: { deptId, email, userId, regionId },
 	} = useSelector((state: RootState) => state.global);
 
 	const gotoFeature = (

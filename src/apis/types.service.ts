@@ -22,7 +22,7 @@ export interface IAuthResponse {
 }
 
 export interface ILocation {
-  id: number;
+  id?: number;
   country: string;
   category: string;
   description: string;
@@ -83,6 +83,7 @@ export interface IUser {
   username: string;
   password: string;
   imgurl?: string;
+  usertype?: string;
 }
 
 //#end

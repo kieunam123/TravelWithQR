@@ -10,7 +10,8 @@ const ScreenType = {
     },
     Detail: {
         LocationDetail: 'Location Detail',
-        PlaceDetail: 'Place Detail'
+        PlaceDetail: 'Place Detail',
+        AddLocation: 'Manage Location',
     },
     Tab: {
         Home: 'Home',

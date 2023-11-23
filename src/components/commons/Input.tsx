@@ -1,7 +1,7 @@
 import React from 'react';
-import {TextInputProps, View} from 'react-native';
-import {TextInput} from 'react-native-gesture-handler';
-import {useField} from 'formik';
+import { StyleProp, TextInputProps, TextStyle, View, ViewStyle } from 'react-native';
+import { TextInput } from 'react-native-gesture-handler';
+import { useField } from 'formik';
 import {
   convertStringToNumber,
   isInvalidString,
@@ -15,6 +15,8 @@ export interface IInputProps extends TextInputProps {
   name: string;
   readonly?: boolean;
   onValueChange?: (value: number | string | any) => void;
+  isNoLabel?: boolean;
+  textInputStyle?: TextStyle;
 }
 
 const Input: React.FC<IInputProps> = ({
@@ -23,9 +25,11 @@ const Input: React.FC<IInputProps> = ({
   name,
   readonly,
   onValueChange,
+  isNoLabel,
+  textInputStyle,
   ...props
 }) => {
-  const {value, placeholder} = props;
+  const { value, placeholder } = props;
   const placeholderStyle = isInvalidString(value)
     ? styles.inputPlaceholder
     : undefined;
@@ -44,24 +48,43 @@ const Input: React.FC<IInputProps> = ({
 
   const strPlaceholder = placeholder ?? `Nhập ${label.toLocaleLowerCase()}`;
 
-  return (
-    <View style={styles.inputContainer}>
-      <TextCustom style={styles.inputTitle}>{label}</TextCustom>
-      <View style={styles.inputContent}>
+  if (!isNoLabel) {
+    return (
+      <View style={styles.inputContainer}>
+        <TextCustom style={styles.inputTitle}>{label}</TextCustom>
+        <View style={styles.inputContent}>
+          <TextInput
+            style={[styles.inputForm]} // , placeholderStyle
+            {...props}
+            keyboardType={isNumber ? 'numeric' : 'default'}
+            onChangeText={(str) => handleOnChangeText(str)}
+            editable={!readonly}
+            placeholder={strPlaceholder}
+          />
+        </View>
+        {meta.error && meta.touched && (
+          <TextCustom style={styles.errorMessage}>{meta.error}</TextCustom>
+        )}
+      </View>
+    );
+  } else {
+    return (
+      <>
         <TextInput
-          style={[styles.inputForm]} // , placeholderStyle
+          style={[styles.inputFormNoLabel, textInputStyle]} // , placeholderStyle
           {...props}
           keyboardType={isNumber ? 'numeric' : 'default'}
           onChangeText={(str) => handleOnChangeText(str)}
           editable={!readonly}
-          placeholder={strPlaceholder}
+          placeholder={label}
         />
-      </View>
-      {meta.error && meta.touched && (
-        <TextCustom style={styles.errorMessage}>{meta.error}</TextCustom>
-      )}
-    </View>
-  );
+        {meta.error && meta.touched && (
+          <TextCustom style={styles.errorMessage}>{meta.error}</TextCustom>
+        )}
+      </>
+    )
+  }
+
 };
 
 Input.defaultProps = {

@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Alert, Image } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Header, SearchBox2 } from '~/components/sections'
 import { FlatListCommon, PrintButton, SafeView } from '~/components/commons'
 import { CreateLocation, LocationItemAdmin } from '~/containers/master'
@@ -18,7 +18,12 @@ const QRScanScreen = () => {
 	const { locations } = useSelector((state: RootState) => state.master);
 	const { userParams } = useSelector((state: RootState) => state.global);
 	const isFocused = useIsFocused();
+	const dispatch = useDispatch();
 	const [isScanQR, setIsScanQR] = useState<boolean>(false);
+
+	const handleGetLocation = useCallback(() => {
+		dispatch(MasterActions.getLocation())
+	}, [dispatch]);
 
 	const camera = async () => {
 		const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -43,16 +48,20 @@ const QRScanScreen = () => {
 	};
 
 	useEffect(() => {
-		if (isFocused && userParams.username !== 'admin') {
-			camera();
+		if (isFocused) {
+			if (userParams.usertype !== 'admin') {
+				camera();
+			} else {
+				handleGetLocation();
+			}
 		} else {
 			setIsScanQR(false)
 		}
-	}, [isFocused])
+	}, [isFocused, handleGetLocation])
 
 	const OnLocationPress = (item: ILocation) => {
 		Alert.alert(`${item.name}`, `Vui lòng lựa chọn hành động`, [
-			{ text: 'Cập nhật', onPress: () => { } },
+			{ text: 'Cập nhật', onPress: () => goToScreen(ScreenType.Detail.AddLocation, {Location: item, type: 'update'}) },
 			{ text: 'Xoá', onPress: () => { } },
 			{ text: 'Huỷ bỏ', onPress: () => { } }
 		])
@@ -73,8 +82,8 @@ const QRScanScreen = () => {
 				<View style={{ flex: 1 }} />
 			</View>}
 			{!isScanQR && <View style={styles.container}>
-				{userParams.username === 'admin' && <>
-					<View style={{padding:10, marginTop:-20}}>
+				{userParams.usertype === 'admin' && <>
+					<View style={{ padding: 10, marginTop: -20 }}>
 						<SearchBox2
 							placeholder={'Tìm kiếm địa điểm'}
 							dataSource={[]}
@@ -95,14 +104,14 @@ const QRScanScreen = () => {
 								category={item.category}
 								date_created={item.date_created}
 								date_updated={item.date_updated}
-								id={item.id}
+								id={item.id ?? 0}
 								short_description={item.short_description ?? ''}
 								onPress={() => OnLocationPress(item)}
 							/>
 						)}
 					/>
 					<PrintButton style={{ bottom: scaleFactor(125) }} onPress={() => { }} iconName='export' iconType='Entypo' />
-					<PrintButton style={{ bottom: scaleFactor(50) }} onPress={() => { }} iconName='plus' iconType='AntDesign' />
+					<PrintButton style={{ bottom: scaleFactor(50) }} onPress={() => goToScreen(ScreenType.Detail.AddLocation, {type: 'add'})} iconName='plus' iconType='AntDesign' />
 				</>}
 			</View>}
 		</SafeView>

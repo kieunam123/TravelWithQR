@@ -16,11 +16,15 @@ const BottomTabNavigator = () => {
     switch (routeName) {
       case 'Home':
         return <Icon type='AntDesign' name={focused ? 'home' : 'home'} size={size} color={color} />;
+      case 'Dashboard':
+        return <Icon type='FontAwesome' name={'bar-chart'} size={size} color={color} />;
       case 'Search':
         return <Icon type='Entypo' name={'magnifying-glass'} size={size} color={color} />;
+      case 'Quản Lý User':
+        return <Icon type='MaterialCommunityIcons' name={'account-cog'} size={size} color={color} />;
       case 'Scan QR':
         return <Icon type='MaterialCommunityIcons' name={'qrcode-scan'} size={scaleFactor(35)} color={color} />;
-      case 'Locations':
+      case 'Quản Lý Địa Điểm':
         return <Icon type='Entypo' name={'location'} size={scaleFactor(35)} color={color} />;
       case 'Notification':
         return <Icon type='MaterialCommunityIcons' name={'bell-outline'} size={size} color={color} />;
@@ -41,9 +45,9 @@ const BottomTabNavigator = () => {
         },
       })}
     >
-      <Tab.Screen name={ScreenType.Tab.Home} component={DashboardScreen} />
-      <Tab.Screen name={ScreenType.Tab.Search} component={SearchScreen} />
-      <Tab.Screen name={userParams.username === 'admin' ? 'Locations' : ScreenType.Tab.ScanQR} component={QRScanScreen} />
+      <Tab.Screen name={userParams.usertype === 'admin' ? 'Dashboard' : ScreenType.Tab.Home} component={DashboardScreen} />
+      <Tab.Screen name={userParams.usertype === 'admin' ? 'Quản Lý User' : ScreenType.Tab.Search} component={SearchScreen} />
+      <Tab.Screen name={userParams.usertype === 'admin' ? 'Quản Lý Địa Điểm' : ScreenType.Tab.ScanQR} component={QRScanScreen} />
       <Tab.Screen name={ScreenType.Tab.Notification} component={NotificationScreen} />
       <Tab.Screen name={ScreenType.Tab.Setting} component={SettingScreen} />
 

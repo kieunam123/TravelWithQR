@@ -57,7 +57,8 @@ const LoginScreen = ({ route }) => {
             address: item.address,
             imgurl: item.imgurl ?? '',
             password: item.password,
-            username: item.username
+            username: item.username,
+            usertype: item.usertype ?? 'user',
           }));
         }
       }
@@ -73,7 +74,8 @@ const LoginScreen = ({ route }) => {
             address: userRegistered.address,
             imgurl: userRegistered.imgurl ?? '',
             password: userRegistered.password,
-            username: userRegistered.username
+            username: userRegistered.username,
+            usertype: 'user'
           }));
         }
       }

@@ -29,7 +29,7 @@ const LocationItemAdmin: React.FC<IProps> = (props) => {
             // borderTopWidth: 0.5,
             borderWidth: 0.5,
             padding: 10,
-            borderRadius: 8,
+            borderRadius: 12,
             backgroundColor: 'white'
           }}>
           <View
@@ -41,35 +41,35 @@ const LocationItemAdmin: React.FC<IProps> = (props) => {
             }}>
             <Image
               source={{ uri: props.img[0] !== undefined ? props.img[0] : 'https://static.vecteezy.com/system/resources/previews/005/337/799/non_2x/icon-image-not-found-free-vector.jpg' }}
-              style={{ width: scaleFactor(100), height: scaleFactor(100), borderRadius:50 }}
+              style={{ width: scaleFactor(120), height: scaleFactor(130), borderRadius:12 }}
               resizeMode='cover'
             />
           </View>
           <View style={{ flex: 2 }}>
             <View style={styles.rowItem}>
-              <TextCustom style={{ fontSize: 12 }}>Location ID</TextCustom>
-              <TextCustom style={styles.rowText}>{props.id}</TextCustom>
+              <TextCustom style={{ fontSize: 12, fontWeight:'bold' }}>Location ID</TextCustom>
+              <TextCustom bold style={styles.rowText}>{props.id}</TextCustom>
             </View>
             <View style={styles.rowItem}>
-              <TextCustom style={{ fontSize: 12 }}>Name</TextCustom>
+              <TextCustom style={{ fontSize: 12, fontWeight:'bold' }}>Name</TextCustom>
               <TextCustom style={styles.rowText}>{props.name}</TextCustom>
             </View>
             <View style={styles.rowItem}>
-              <TextCustom style={{ fontSize: 12 }}>Country</TextCustom>
+              <TextCustom style={{ fontSize: 12, fontWeight:'bold' }}>Country</TextCustom>
               <TextCustom style={styles.rowText}>{props.country}</TextCustom>
             </View>
             <View style={styles.rowItem}>
-              <TextCustom style={{ fontSize: 12 }}>Category</TextCustom>
+              <TextCustom style={{ fontSize: 12, fontWeight:'bold' }}>Category</TextCustom>
               <TextCustom style={styles.rowText}>{props.category}</TextCustom>
             </View>
             <View style={styles.rowItem}>
-              <TextCustom style={{ fontSize: 12 }}>Date Created</TextCustom>
+              <TextCustom style={{ fontSize: 12, fontWeight:'bold' }}>Date Created</TextCustom>
               <TextCustom style={styles.rowText}>
                 {props.date_created}
               </TextCustom>
             </View>
             <View style={styles.rowItem}>
-              <TextCustom style={{ fontSize: 12 }}>Date Updated</TextCustom>
+              <TextCustom style={{ fontSize: 12, fontWeight:'bold' }}>Date Updated</TextCustom>
               <TextCustom style={styles.rowText}>
                 {props.date_updated ?? '---'}
               </TextCustom>

@@ -16,7 +16,7 @@ import {
 	RegisterScreen,
 } from '../screens/mains';
 import BottomTabNavigator from './bottomTabs/bottomtab.navigation';
-import { AddLocationScreen, LocationDetail, PlaceDetail } from '~/screens/details';
+import { AddLocationScreen, LocationDetail, PlaceDetail, UpdateUserScreen } from '~/screens/details';
 
 const Stack = createStackNavigator();
 
@@ -41,7 +41,7 @@ const RoutesNavigatorContainer = (): any => {
 						<Stack.Screen name={ScreenType.Detail.LocationDetail} component={LocationDetail}/>
 						<Stack.Screen name={ScreenType.Detail.PlaceDetail} component={PlaceDetail}/>
 						<Stack.Screen name={ScreenType.Detail.AddLocation} component={AddLocationScreen}/>
-
+						<Stack.Screen name={ScreenType.Detail.UpdateUser} component={UpdateUserScreen}/>
 						{/* <Stack.Screen name={ScreenType.Main.Dashboard} component={DashboardScreen}/> */}
 
 				</Stack.Navigator>

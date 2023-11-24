@@ -112,7 +112,7 @@ const Header: React.FC<IHeaderProps> = ({
             </View>
           )}
           {!disableThreeDot && (
-            <Icon type="AntDesign" name="filter" style={styles.menuIcon} />
+            <TextCustom bold style={{color: Colors.SUCCESS}}>SAVE</TextCustom>
           )}
         </>
       </Pressable>

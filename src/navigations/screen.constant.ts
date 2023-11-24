@@ -12,6 +12,7 @@ const ScreenType = {
         LocationDetail: 'Location Detail',
         PlaceDetail: 'Place Detail',
         AddLocation: 'Manage Location',
+        UpdateUser: 'Update User'
     },
     Tab: {
         Home: 'Home',

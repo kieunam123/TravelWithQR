@@ -52,14 +52,16 @@ export interface IImgurData {
 }
 
 export interface ILocationPlace {
+  placeid?: number;
   address: string;
   image_link: string[];
   name: string;
   rating: number;
   description: string;
-  city: string;
-  country: string;
-  short_description: string;
+  city?: string;
+  country?: string;
+  short_description?: string;
+  category?: string;
 }
 
 export interface ISearchCommon {

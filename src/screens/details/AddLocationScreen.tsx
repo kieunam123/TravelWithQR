@@ -1,27 +1,37 @@
-import { Dimensions, Image, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, Dimensions, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { FlatListCommon, Icon, Input, SafeView, TextCustom } from '~/components/commons';
 import { Column, Header, Row } from '~/components/sections';
 import { Colors, Sizes, fonts } from '~/configs';
-import { convertStringToNumber, scaleFactor } from '~/helpers/UtilitiesHelper';
+import { chunkArray, convertStringToNumber, scaleFactor } from '~/helpers/UtilitiesHelper';
 import icons from '~/assets/icons';
 import { Formik } from 'formik';
-import { ILocation } from '~/apis/types.service';
-import { ImageUpload } from '~/containers/master';
+import { ILocation, ILocationPlace } from '~/apis/types.service';
+import { ImageUpload, LocationItem } from '~/containers/master';
 import Loading2 from '~/containers/Loading2';
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const AddLocationScreen = ({ route }) => {
   const { Location, type } = route.params ?? '';
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  function chunkArray<T>(array: T[], size: number): T[][] {
-    return Array.from({ length: Math.ceil(array.length / size) }, (_, index) =>
-      array.slice(index * size, index * size + size)
-    );
+  const [isAddPlaces, setIsAddPlaces] = useState<boolean>(false);
+  const [placesIndex, setPlacesIndex] = useState<number>();
+  const defaultPlaces: ILocationPlace = {
+    placeid: Date.now(),
+    address: '',
+    image_link: [],
+    name: '',
+    rating: 0,
+    description: '',
+    // city: '',
+    // country: '',
+    short_description: '',
   }
-  const imageRows = (imageUrlArray: string[]): string[][] => {
-    return chunkArray(imageUrlArray, 3)
+  const [places, setPlaces] = useState<ILocationPlace>(defaultPlaces);
+  const Rows = (imageUrlArray: ILocationPlace[]): ILocationPlace[][] => {
+    return chunkArray(imageUrlArray, 2)
   }
+
   const starcomponent = (rating: number): JSX.Element => {
     const stars: JSX.Element[] = [];
     const fullStars = Math.floor(rating);
@@ -68,12 +78,20 @@ const AddLocationScreen = ({ route }) => {
     <Formik
       initialValues={locationObj}
       onSubmit={(values) => {
-        console.log(JSON.stringify(values,undefined,2));
-        
+        console.log(JSON.stringify(values, undefined, 2));
+
       }}>{({ values, handleSubmit, setFieldValue }) => {
+        async function updatePlaces() {
+          if (placesIndex !== undefined) {
+            let newPlaces: ILocationPlace[] = values.places;
+            const updatePlaces: ILocationPlace = { ...values.places[placesIndex], ...places };
+            newPlaces[placesIndex] = updatePlaces;
+            setFieldValue('places', newPlaces);
+          } else setFieldValue('places', [...values.places, places])
+        }
         return (
           <>
-            <SafeView>
+            {!isAddPlaces && <SafeView>
               <Loading2 text='Vui lòng đợi giây lát...' isVisible={isLoading} />
               <Header title={type === 'add' ? 'Thêm địa điểm' : `${values.name}`} disableThreeDot isMenu={false} />
               <ScrollView>
@@ -100,13 +118,16 @@ const AddLocationScreen = ({ route }) => {
 
                 <View style={styles.bodyContainer}>
                   <View style={styles.TitleContainer}>
-                    <Input
-                      isNoLabel
-                      value={values.name}
-                      name='name'
-                      label='Nhập tên địa điểm'
-                      textInputStyle={styles.LocationTitle}
-                    />
+                    <View>
+                      <Input
+                        isNoLabel
+                        value={values.name}
+                        name='name'
+                        label='Nhập tên địa điểm'
+                        textInputStyle={styles.LocationTitle}
+                      />
+                      <Input isNoLabel name='short_description' value={values.short_description} label='Nhập chú thích...' textInputStyle={{ color: Colors.GRAY_LIGHT, fontSize: Sizes.Note, fontFamily: fonts.RobotoItalic, paddingHorizontal: 5 }} />
+                    </View>
                     <View style={styles.ratingContainer}>
                       {starcomponent(convertStringToNumber(`${values.rate}`))}
                       <Input isNoLabel name='rate' value={`${values.rate}`} label='Nhập đánh giá' textInputStyle={{ color: Colors.GRAY_LIGHT, fontSize: Sizes.Note, fontFamily: fonts.RobotoItalic }} />
@@ -122,11 +143,7 @@ const AddLocationScreen = ({ route }) => {
                       <Input isNoLabel name='country' value={values.country} label='Nhập quốc gia' textInputStyle={{ color: Colors.GRAY_LIGHT, fontSize: Sizes.Note, fontFamily: fonts.RobotoItalic, paddingHorizontal: 5 }} />
                     </View>
                     <View style={styles.LocationPin}>
-                      <Icon
-                        type='MaterialCommunityIcons'
-                        name='airplane-marker'
-                        size={scaleFactor(25)}
-                      />
+                      <TextCustom bold isSmall>Category: </TextCustom>
                       <Input isNoLabel name='category' value={values.category} label='Nhập loại địa điểm' textInputStyle={{ color: Colors.GRAY_LIGHT, fontSize: Sizes.Note, fontFamily: fonts.RobotoItalic, paddingHorizontal: 5 }} />
                     </View>
                     <Input multiline isNoLabel name='description' value={values.description} label='Nhập mô tả...' textInputStyle={{ fontSize: 15 }} />
@@ -139,34 +156,59 @@ const AddLocationScreen = ({ route }) => {
                       onImageUploadComplete={(newlist) => setFieldValue('image_links', newlist)}
                       onDeleteImage={(index) => {
                         let updateImages = [...values.image_links]
-                        updateImages.splice(index, 1);              
-                        setFieldValue('image_links', updateImages);                                 
+                        updateImages.splice(index, 1);
+                        setFieldValue('image_links', updateImages);
                       }}
                     />
                   </View>
-                  {/* {Location.places[0] !== undefined && <View style={styles.placesToVisit}>
-                <Text style={{ fontSize: 18, fontWeight: 'bold', paddingBottom: 10 }}>ĐỊA ĐIỂM THAM QUAN</Text>
-                <FlatListCommon
-                  onRefresh={() => { }}
-                  isShowVertical={false}
-                  horizontal
-                  data={Location.places.sort((a, b) => b.rating - a.rating)}
-                  renderItem={({ item }: { item: ILocationPlace }) => (
-                    <View style={{ paddingHorizontal: 5 }}>
-                      <LocationItem
-                        title={item.name}
-                        img={item.image_link[0] ?? ''}
-                        rating={item.rating}
-                        description={item.description}
-                        country={item.country}
-                        onPress={() => { }}
-                      />
-                    </View>
-                  )}
-                />
-              </View>} */}
-                </View>
+                  {values.name !== '' && <View style={styles.placesToVisit}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', paddingBottom: 10 }}>ĐỊA ĐIỂM THAM QUAN</Text>
+                    <View style={styles.PhotoContainer}>
+                      {Rows(values.places).map((item, index) => {
+                        return (
+                          <View style={{ flexDirection: 'row', padding: 5 }} key={index}>
+                            {item.map((item, columnIndex) => (
+                              <View key={columnIndex} style={styles.Images}>
+                                <TouchableOpacity onPress={() => {
+                                  Alert.alert(`${item.name} - ID: ${item.placeid}`, 'Lựa chọn hành động', [
+                                    {
+                                      text: 'Cập nhật', onPress: () => {
+                                        setPlaces(item);
+                                        setPlacesIndex(index);
+                                        setIsAddPlaces(true);
+                                      }
+                                    },
+                                    {
+                                      text: 'Xoá', onPress: () => {
+                                        const updatedArray = values.places.filter((obj, index) => index !== columnIndex);
+                                        setFieldValue('places', updatedArray)
+                                      }
+                                    },
+                                    { text: 'Huỷ bỏ', onPress: () => { } }
+                                  ])
+                                }}>
+                                  <LocationItem
+                                    title={item.name}
+                                    img={item.image_link[0] ?? ''}
+                                    rating={item.rating}
+                                    description={item.description}
+                                    country={item.country ?? ''}
 
+                                  />
+                                </TouchableOpacity>
+                              </View>
+                            ))}
+                          </View>
+                        )
+                      })}
+                      <View style={styles.imageContainer}>
+                        <TouchableOpacity onPress={() => setIsAddPlaces(true)} style={{}}>
+                          <Image source={icons.addLocation} style={styles.image} />
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>}
+                </View>
               </ScrollView>
               <View style={{ backgroundColor: Colors.SUCCESS, borderColor: Colors.BORDER_TWO, borderWidth: 1, alignItems: 'center' }}>
                 <Row>
@@ -184,7 +226,130 @@ const AddLocationScreen = ({ route }) => {
                   </Column>
                 </Row>
               </View>
-            </SafeView>
+            </SafeView>}
+            {isAddPlaces && <SafeView>
+              <Loading2 text='Vui lòng đợi giây lát...' isVisible={isLoading} />
+              <Header
+                title={placesIndex === undefined ? 'Thêm điểm tham quan' : `${values.places[placesIndex].name}`}
+                isMenu={false} currentScreenOff onBackPress={() => {
+                  Alert.alert('Chưa lưu thông tin', 'Thông tin chưa được lưu\nBạn có chắc muốn thoát?', [
+                    {
+                      text: 'Thoát', onPress: () => {
+                        setPlaces(defaultPlaces);
+                        setIsAddPlaces(false);
+                        setPlacesIndex(undefined);
+                      }
+                    },
+                    {
+                      text: 'Lưu', onPress: async () => {
+                        await updatePlaces();
+                        setPlaces(defaultPlaces);
+                        setIsAddPlaces(false);
+                        setPlacesIndex(undefined);
+                      }
+                    }
+                  ])
+                }}
+                onMenuPress={async () => {
+                  await updatePlaces();
+                  setPlaces(defaultPlaces);
+                  setIsAddPlaces(false);
+                  setPlacesIndex(undefined);
+                }} />
+              <ScrollView>
+                <View style={styles.headerContainer}>
+                  <View style={styles.ImgContainer}>
+                    {placesIndex !== undefined && <Image
+                      source={{ uri: values.places[placesIndex].image_link[0] ?? 'https://icon-library.com/images/add-image-icon/add-image-icon-0.jpg' }}
+                      style={{ height: SCREEN_HEIGHT * 0.8, width: SCREEN_WIDTH }}
+                    />}
+                    {placesIndex === undefined &&
+                      <TouchableOpacity onPress={() => { }}>
+                        <Image
+                          source={places.image_link[0] !== undefined ? { uri: places.image_link[0] } : icons.addImg}
+                          style={{ height: scaleFactor(200), width: scaleFactor(200), top: SCREEN_HEIGHT * 0.158 }}
+                        // resizeMode='center'
+                        />
+                      </TouchableOpacity>
+                    }
+                  </View>
+                </View>
+                <View style={styles.bodyContainer}>
+                  <View style={styles.TitleContainer}>
+                    <TextInput
+                      style={[styles.inputFormNoLabel, styles.LocationTitle]}
+                      placeholder={'Tên điểm tham quan'}
+                      defaultValue={placesIndex === undefined ? undefined : values.places[placesIndex].name}
+                      onChangeText={(str) => setPlaces({ ...places, name: str })}
+                    />
+                    <View style={styles.ratingContainer}>
+                      {starcomponent(convertStringToNumber(`${places.rating}`))}
+                      <TextInput
+                        style={[styles.inputFormNoLabel, { color: Colors.GRAY_LIGHT, fontSize: Sizes.Note, fontFamily: fonts.RobotoItalic }]}
+                        defaultValue={placesIndex === undefined ? undefined : `${values.places[placesIndex].rating}`}
+                        placeholder={'Nhập đánh giá'}
+                        onChangeText={(str) => setPlaces({ ...places, rating: convertStringToNumber(str) })}
+                      />
+                    </View>
+                  </View>
+                  <View>
+                    <TextInput
+                      style={[styles.inputFormNoLabel, { color: Colors.GRAY_LIGHT, fontSize: Sizes.Note, fontFamily: fonts.RobotoItalic, paddingHorizontal: 5 }]}
+                      defaultValue={placesIndex === undefined ? undefined : values.places[placesIndex].short_description ?? ''}
+                      placeholder={'Nhập chú thích...'}
+                      onChangeText={(str) => setPlaces({ ...places, short_description: str })}
+                    />
+                  </View>
+
+                  <View style={styles.LocationDetail}>
+                    <View style={styles.LocationPin}>
+                      <Icon
+                        type='Entypo'
+                        name='location-pin'
+                        size={scaleFactor(25)}
+                      />
+                      <TextInput
+                        style={[styles.inputFormNoLabel, { color: Colors.GRAY_LIGHT, fontSize: Sizes.Note, fontFamily: fonts.RobotoItalic, paddingHorizontal: 5 }]}
+                        placeholder={`Nhập địa chỉ`}
+                        defaultValue={placesIndex === undefined ? undefined : values.places[placesIndex].address ?? ''}
+                        onChangeText={(str) => setPlaces({ ...places, address: str })}
+                      />
+                    </View>
+                    <View style={styles.LocationPin}>
+                      <TextCustom bold isSmall>Category: </TextCustom>
+                      <TextInput
+                        style={[styles.inputFormNoLabel, { color: Colors.GRAY_LIGHT, fontSize: Sizes.Note, fontFamily: fonts.RobotoItalic, paddingHorizontal: 5 }]}
+                        defaultValue={placesIndex === undefined ? undefined : values.places[placesIndex].category ?? undefined}
+                        placeholder={'Nhập loại địa điểm...'}
+                        onChangeText={(str) => setPlaces({ ...places, category: str })}
+                      />
+                    </View>
+                    <TextInput
+                      style={[styles.inputFormNoLabel, { fontSize: 15 }]}
+                      placeholder={'Nhập mô tả...'}
+                      defaultValue={placesIndex === undefined ? undefined : values.places[placesIndex].description ?? undefined}
+                      onChangeText={(str) => setPlaces({ ...places, description: str })}
+                      multiline
+                    />
+                  </View>
+                  <View style={styles.LocationPhoto}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', paddingBottom: 10 }}>ẢNH</Text>
+                    <ImageUpload
+                      images={places.image_link}
+                      onImageUpload={(status) => setIsLoading(status)}
+                      onImageUploadComplete={(newlist) => setPlaces({ ...places, image_link: newlist })}
+                      onDeleteImage={(index) => {
+                        if (placesIndex !== undefined) {
+                          let updateImages = [...values.places[placesIndex].image_link]
+                          updateImages.splice(index, 1);
+                          setPlaces({ ...places, image_link: updateImages })
+                        }
+                      }}
+                    />
+                  </View>
+                </View>
+              </ScrollView>
+            </SafeView>}
           </>
         )
       }}</Formik>
@@ -226,7 +391,7 @@ const styles = StyleSheet.create({
 
   },
   LocationTitle: {
-    fontSize: 30,
+    fontSize: 27,
     fontWeight: 'bold',
 
   },
@@ -256,5 +421,16 @@ const styles = StyleSheet.create({
   },
   placesToVisit: {
     paddingVertical: 25,
-  }
+  },
+  imageContainer: {
+    width: '32%',
+    marginBottom: 8,
+    position: 'relative',
+    // alignSelf: 'center'
+  },
+  image: { width: 100, height: 100, borderRadius: 5 },
+  inputFormNoLabel: {
+    fontFamily: fonts.RobotoRegular,
+    fontSize: Sizes.Content,
+  },
 })

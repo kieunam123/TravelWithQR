@@ -7,13 +7,13 @@ import { scaleFactor } from '~/helpers/UtilitiesHelper'
 import { Icon, TextCustom } from '~/components/commons'
 
 export interface IProps {
+  placeId?: number;
   title: string;
   description?: string;
   short_description?: string;
   rating?: number;
   country: string;
   img: string;
-  onPress: () => void;
 }
 
 const LocationItem: React.FC<IProps> = (props) => {
@@ -51,16 +51,14 @@ const LocationItem: React.FC<IProps> = (props) => {
   };
   return (
     <>
-      <TouchableOpacity onPress={props.onPress}>
-        <View style={styles.itemContainer}>
-          <View style={styles.imgContainer}>
-            <Image source={{ uri: props.img }} resizeMode='cover' style={styles.img} />
-          </View>
-          <TextCustom bold>{props.title}</TextCustom>
-          {props.short_description && <TextCustom bold isSmall>{props.short_description ?? props.country}</TextCustom>}
-          {props.rating && starcomponent(props.rating ?? 0)}
+      <View style={styles.itemContainer}>
+        <View style={styles.imgContainer}>
+          <Image source={{ uri: props.img }} resizeMode='cover' style={styles.img} />
         </View>
-      </TouchableOpacity>
+        <TextCustom bold>{props.title}</TextCustom>
+        {props.short_description && <TextCustom bold isSmall>{props.short_description ?? props.country}</TextCustom>}
+        {props.rating && starcomponent(props.rating ?? 0)}
+      </View>
     </>
   )
 }
@@ -76,8 +74,9 @@ const styles = StyleSheet.create({
     // flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 15
+    borderRadius: 15,
     // flexDirection: 'row',
+    alignSelf: 'flex-start'
   },
   imgContainer: {
     // flex:1,

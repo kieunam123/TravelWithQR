@@ -139,8 +139,7 @@ const LocationDetail = ({ route }) => {
                       img={item.image_link[0] ?? ''}
                       rating={item.rating}
                       description={item.description}
-                      country={item.country}
-                      onPress={() => { }}
+                      country={item.country ?? ''}
                     />
                   </View>
                 )}

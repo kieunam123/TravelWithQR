@@ -18,7 +18,14 @@ interface ImageUploadProps {
 
 const ImageUpload: React.FC<ImageUploadProps> = ({ images, onImageUpload, onImageUploadComplete, onDeleteImage }) => {
   let imagelist: string[] = images
-
+  function chunkArray<T>(array: T[], size: number): T[][] {
+    return Array.from({ length: Math.ceil(array.length / size) }, (_, index) =>
+      array.slice(index * size, index * size + size)
+    );
+  }
+  const imageRows = (imageUrlArray: string[]): string[][] => {
+    return chunkArray(imageUrlArray, 3)
+  }
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
@@ -51,34 +58,41 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ images, onImageUpload, onImag
   const renderImageGrid = () => {
     return (
       <>
-        {images.map((image, index) => (
-          <View key={index} style={styles.imageContainer}>
-            <TouchableOpacity onLongPress={() => {
-              Alert.alert('Xác nhận thao tác', 'Bạn muốn xoá hình ảnh này?', [
-                {text: 'Xoá', onPress:()=>onDeleteImage(index)},
-                {text: 'Huỷ bỏ', onPress:()=>{}}
-              ])
-              }}>
-              <Image source={{ uri: image }} style={styles.image} />
+        <View style={styles.PhotoContainer}>
+          {imageRows(images).map((item, index) => {
+            return (
+              <View style={{ flexDirection: 'row', padding: 5 }} key={index}>
+                {item.map((imgUrl, columnIndex) => (
+                  <View key={columnIndex} style={styles.Images}>
+                    <TouchableOpacity onLongPress={() => {
+                      Alert.alert('Xác nhận thao tác', 'Bạn muốn xoá hình ảnh này?', [
+                        { text: 'Xoá', onPress: () => onDeleteImage(columnIndex) },
+                        { text: 'Huỷ bỏ', onPress: () => { } }
+                      ])
+                    }}>
+                      <Image
+                        source={{ uri: imgUrl }}
+                        resizeMode='cover'
+                        style={styles.image}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </View>
+            )
+          })}
+          <View style={styles.imageContainer}>
+            <TouchableOpacity onPress={pickImage} style={{}}>
+              <Image source={icons.addImg} style={styles.image} />
             </TouchableOpacity>
-            {index === images.length - 1 && (
-              <TouchableOpacity onPress={pickImage} style={{}}>
-                <Image source={icons.addImg} style={styles.image} />
-              </TouchableOpacity>
-            )}
           </View>
-        ))}
-        {!images[0] && <View style={styles.imageContainer}>
-          <TouchableOpacity onPress={pickImage} style={{}}>
-            <Image source={icons.addImg} style={styles.image} />
-          </TouchableOpacity>
-        </View>}
+        </View>
       </>
     );
   };
 
 
-  return <View style={styles.container}>{renderImageGrid()}</View>;
+  return <View style={{}}>{renderImageGrid()}</View>;
 };
 
 const styles = StyleSheet.create({
@@ -94,11 +108,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     position: 'relative',
   },
-  image: {
-    width: '100%',
-    height: 100,
-    borderRadius: 8,
-  },
+  image: { width: 100, height: 100, borderRadius: 5 },
+
   emptyImageContainer: {
     position: 'absolute',
     top: 0,
@@ -112,6 +123,14 @@ const styles = StyleSheet.create({
     width: '60%',
     height: '60%',
     resizeMode: 'contain',
+  },
+  PhotoContainer: {
+    flexDirection: 'column',
+  },
+  Images: {
+    flex: 1,
+    // borderRadius: 25
+    // aspectRatio: 1,
   },
 });
 

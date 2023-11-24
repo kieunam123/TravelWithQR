@@ -24,7 +24,8 @@ const icons = {
   qrscanout: require('./qrscanout_red.png'),
   qr_scanning: require('./qr_scanning.png'),
   addImg: require('./add-img.png'),
-  addImg2: require('./add-img-2.png')
+  addImg2: require('./add-img-2.png'),
+  addLocation: require('./location-add.png')
 };
 
 export default icons;

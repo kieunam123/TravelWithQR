@@ -223,3 +223,9 @@ export async function callApiPostWithToken(url: string, endpoint:string, body: a
       console.log(`API error. detail: ${err}`)
     });
 }
+
+export function chunkArray<T>(array: T[], size: number): T[][] {
+  return Array.from({ length: Math.ceil(array.length / size) }, (_, index) =>
+    array.slice(index * size, index * size + size)
+  );
+}

@@ -74,7 +74,7 @@ const DashboardScreen = () => {
 			<View style={styles.container}>
 				<View style={{ paddingBottom: scaleFactor(30), flexDirection: 'row', alignItems: 'center', justifyContent: "space-between", padding: 10 }}>
 					<View>
-						<Text style={styles.title}>Xin chào, </Text>
+						<Text style={{fontSize:15}}>Xin chào, </Text>
 						<TextCustom bold style={styles.title}>{userParams.name}</TextCustom>
 					</View>
 					<View style={{ paddingHorizontal: scaleFactor(20) }}>
@@ -188,6 +188,7 @@ const styles = StyleSheet.create({
 	title: {
 		fontFamily: fonts.RobotoRegular,
 		fontSize: 30,
+		color: 'blue'
 	},
 	title2: {
 		fontFamily: fonts.RobotoBold,

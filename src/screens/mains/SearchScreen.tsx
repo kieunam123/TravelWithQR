@@ -24,7 +24,7 @@ export interface IMonitoringFilterModel {
 
 const SearchScreen = () => {
 	const { userParams } = useSelector((state: RootState) => state.global);
-	const { User, locations } = useSelector((state: RootState) => state.master);
+	const { User, locations, places } = useSelector((state: RootState) => state.master);
 	const isFocused = useIsFocused();
 	const dispatch = useDispatch();
 	const [userlist, setUserList] = useState<IUser[]>([]);
@@ -114,6 +114,27 @@ const SearchScreen = () => {
 			})
 		})
 		return countryMenu;
+	}
+
+	const listLocationAndPlaces = () => {
+		let locationAndPlace: ILocation[] = [];
+		locationAndPlace.push(...locations)
+		places.forEach((place) => {
+			return locationAndPlace.push({
+				id: place.placeid,
+				country: place.country ?? '',
+				category: place.category ?? '',
+				description: place.description,
+				short_description: place.short_description ?? '',
+				date_created: '',
+				date_updated: '',
+				name: place.name,
+				rate: place.rating,
+				image_links: place.image_link ?? [],
+				places: []
+			})
+		});
+		return locationAndPlace
 	}
 
 	return (
@@ -258,12 +279,12 @@ const SearchScreen = () => {
 							}}
 						</Formik>
 					</View>}
-					{!isFilter && <View>
+					{!isFilter && <View style={{flex:1}}>
 
 						<FlatListCommon
 							onRefresh={() => { }}
 							isShowVertical={true}
-							data={locations}
+							data={listLocationAndPlaces()}
 							renderItem={({ item }: { item: ILocation }) => (
 								<LocationItemUser
 									name={item.name}
@@ -274,6 +295,7 @@ const SearchScreen = () => {
 									date_updated={item.date_updated}
 									id={item.id ?? 0}
 									short_description={item.short_description ?? ''}
+									rate={item.rate}
 									onPress={() => goToScreen(ScreenType.Detail.LocationDetail, {Location: item})}
 								/>
 							)}

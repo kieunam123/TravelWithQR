@@ -110,14 +110,25 @@ const QRScanScreen = () => {
 			</View>}
 			{!isScanQR && <View style={styles.container}>
 				{userParams.usertype === 'admin' && <>
-					<View style={{ padding: 10, marginTop: -20 }}>
+					<View style={{ flexDirection: 'row', height: scaleFactor(100) }}>
+						<View style={{ flex: 1 }}>
+							<PrintButton style={{}} onPress={() => { }} iconName='magnifying-glass' iconType='Entypo' />
+						</View>
+						<View style={{ flex: 1 }}>
+							<PrintButton style={{}} onPress={() => goToScreen(ScreenType.Detail.AddLocation, { type: 'add' })} iconName='plus' iconType='AntDesign' />
+						</View>
+						<View style={{ flex: 1 }}>
+							<PrintButton style={{}} onPress={() => { }} iconName='export' iconType='Entypo' />
+						</View>
+					</View>
+					{/* <View style={{ padding: 10, marginTop: -20 }}>
 						<SearchBox2
 							placeholder={'Tìm kiếm địa điểm'}
 							dataSource={[]}
 							accessor={'key'}
 							stringtext={() => { }}
 						/>
-					</View>
+					</View> */}
 
 					<FlatListCommon
 						onRefresh={() => { }}
@@ -137,8 +148,7 @@ const QRScanScreen = () => {
 							/>
 						)}
 					/>
-					<PrintButton style={{ bottom: scaleFactor(125) }} onPress={() => { }} iconName='export' iconType='Entypo' />
-					<PrintButton style={{ bottom: scaleFactor(50) }} onPress={() => goToScreen(ScreenType.Detail.AddLocation, { type: 'add' })} iconName='plus' iconType='AntDesign' />
+
 				</>}
 			</View>}
 		</SafeView>

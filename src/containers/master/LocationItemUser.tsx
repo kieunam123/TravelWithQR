@@ -2,7 +2,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { scaleFactor } from '~/helpers/UtilitiesHelper';
 import { Colors } from '~/configs';
-import { TextCustom } from '~/components/commons';
+import { Icon, TextCustom } from '~/components/commons';
 
 export interface IProps {
   onPress?: () => void;
@@ -13,10 +13,39 @@ export interface IProps {
   date_updated?: string;
   date_created?: string;
   short_description?: string;
-  id: number
+  id: number;
+  rate: number;
 }
 
 const LocationItemUser: React.FC<IProps> = (props) => {
+  const starcomponent = (rating: number): JSX.Element => {
+    const stars: JSX.Element[] = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <Icon
+          key={i}
+          type='MaterialIcons'
+          name={i <= fullStars ? 'star' : 'star-border'}
+          color={Colors.Yellow}
+          size={scaleFactor(19)}
+        />
+      );
+    }
+    if (hasHalfStar) {
+      stars[Math.floor(rating)] = (
+        <Icon
+          key={Math.ceil(rating)}
+          type='MaterialIcons'
+          name='star-half'
+          color={Colors.Yellow}
+          size={scaleFactor(19)}
+        />
+      );
+    }
+    return <View style={{ flexDirection: 'row' }}>{stars}</View>;
+  };
   return (
     <TouchableOpacity onPress={props.onPress}>
       <View style={styles.itemContainer}>
@@ -45,32 +74,40 @@ const LocationItemUser: React.FC<IProps> = (props) => {
             />
           </View>
           <View style={{ flex: 2 }}>
-            <View style={styles.rowItem}>
+            {/* <View style={styles.rowItem}>
               <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>Location ID</TextCustom>
               <TextCustom bold style={styles.rowText}>{props.id}</TextCustom>
+            </View> */}
+            <View style={[styles.rowItem]}>
+              {/* <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>Date Created</TextCustom> */}
+              <View style={{ flexDirection: 'row' }}>
+                <TextCustom isSmall style={styles.rowText}>
+                  {props.rate}
+                </TextCustom>
+                {starcomponent(props.rate)}
+              </View>
             </View>
             <View style={styles.rowItem}>
-              <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>Name</TextCustom>
-              <TextCustom style={styles.rowText}>{props.name}</TextCustom>
+              {/* <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>Name</TextCustom> */}
+              <TextCustom bold style={{ fontSize: 20, color: Colors.BLACK }}>{props.name}</TextCustom>
             </View>
             <View style={styles.rowItem}>
-              <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>Country</TextCustom>
+              {/* <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>Country</TextCustom> */}
               <TextCustom style={styles.rowText}>{props.country}</TextCustom>
             </View>
             <View style={styles.rowItem}>
-              <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>Category</TextCustom>
+              {/* <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>Category</TextCustom> */}
+              <View style={{flexDirection:'row'}}>
+              <Icon name='tag' type='FontAwesome' size={20} style={{paddingRight: 10}}/>
               <TextCustom style={styles.rowText}>{props.category}</TextCustom>
+              </View>
+              
             </View>
+
             <View style={styles.rowItem}>
-              <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>Date Created</TextCustom>
-              <TextCustom style={styles.rowText}>
-                {props.date_created}
-              </TextCustom>
-            </View>
-            <View style={styles.rowItem}>
-              <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>Date Updated</TextCustom>
-              <TextCustom style={styles.rowText}>
-                {props.date_updated ?? '---'}
+              {/* <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>Date Updated</TextCustom> */}
+              <TextCustom isSmall style={styles.rowText}>
+                {props.short_description ?? '---'}
               </TextCustom>
             </View>
             {/* <View style={styles.rowItem}>
@@ -94,9 +131,11 @@ const styles = StyleSheet.create({
     // paddingVertical: 10,
   },
   rowItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    // flexDirection: 'row',
+    // justifyContent: 'space-between',
     paddingVertical: 3,
+    justifyContent: 'center',
+    paddingHorizontal: 20
   },
   rowText: { fontSize: scaleFactor(15) },
 })

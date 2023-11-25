@@ -4,7 +4,7 @@ import { Alert, Image, ImageBackground, TouchableOpacity } from 'react-native';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { TextInput, Button, IconButton } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
-import { IUser } from '~/apis/types.service';
+import { IImgurResult, IUser } from '~/apis/types.service';
 import imgs from '~/assets/imgs';
 import { Icon, TextCustom } from '~/components/commons';
 import { Header } from '~/components/sections';
@@ -13,6 +13,10 @@ import { scaleFactor } from '~/helpers/UtilitiesHelper';
 import ScreenType from '~/navigations/screen.constant';
 import MasterActions from '~/redux/master/master.actions';
 import { RootState } from '~/redux/reducers';
+import * as ImagePicker from 'expo-image-picker';
+import { callApiPostWithToken } from '~/helpers/UtilitiesHelper';
+import { IMGUR_ACCESSTOKEN, IMGUR_API } from '~/configs/strings';
+import Loading2 from '~/containers/Loading2';
 
 const RegisterScreen = () => {
   const { User } = useSelector((state: RootState) => state.master);
@@ -23,14 +27,15 @@ const RegisterScreen = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
-  const [imgurl, setImgUrl] = useState('');
+  const [imgurl, setImgUrl] = useState('https://static.vecteezy.com/system/resources/previews/005/337/799/non_2x/icon-image-not-found-free-vector.jpg');
   const [userlist, setUserList] = useState<IUser[]>([]);
+  const [onImageUpload, setOnImageUpload] = useState<boolean>(false)
   const [passwordVisible, setPasswordVisible] = useState(false);
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window')
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
-  const InputLabel = (label:string) => {
+  const InputLabel = (label: string) => {
     return <Text style={styles.labelColor}>{label}</Text>
   }
   const handleGetUser = useCallback(() => {
@@ -45,8 +50,37 @@ const RegisterScreen = () => {
     setUserList(User);
   }, [User]);
 
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Vui lòng cấp quyền truy cập thư viện!!');
+      return;
+    }
+    setOnImageUpload(true);
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      base64: true,
+    });
+    if (!result.canceled) {
+      const response: IImgurResult = await callApiPostWithToken(
+        IMGUR_API,
+        '',
+        { image: result.assets[0].base64 ?? '' },
+        `Client-ID ${IMGUR_ACCESSTOKEN}`
+      );
+      if (response.success) {
+        setImgUrl(response.data.link)
+
+      } else {
+        alert(`Không thể tải ảnh lên host. status ${response.status}`);
+      }
+    }
+    setOnImageUpload(false);
+  };
+
   async function checkUserExist(username: string) {
-    if(name !== '' && phone !== '' && address !== '' && username !== '' && password !== '' ){
+    if (name !== '' && phone !== '' && address !== '' && username !== '' && password !== '') {
       let isFound: boolean = false
       userlist.forEach((item) => {
         if (item.username === username) {
@@ -56,17 +90,19 @@ const RegisterScreen = () => {
       if (isFound) {
         alert('Username này đã tồn tại')
       } else {
-        Alert.alert(`Thông tin đăng ký`,`Họ tên: ${name}\nSĐT: ${phone}\nĐịa chỉ: ${address}\nUsername: ${username}`,[
-          {text:'Đăng ký', onPress:()=>{
-            dispatch(MasterActions.CreateUser({
-              name: name,
-              address: address,
-              mobile: phone,
-              username: username,
-              password: password,
-              imgurl: ''
-            }))
-          }}
+        Alert.alert(`Thông tin đăng ký`, `Họ tên: ${name}\nSĐT: ${phone}\nĐịa chỉ: ${address}\nUsername: ${username}`, [
+          {
+            text: 'Đăng ký', onPress: () => {
+              dispatch(MasterActions.CreateUser({
+                name: name,
+                address: address,
+                mobile: phone,
+                username: username,
+                password: password,
+                imgurl: imgurl ?? ''
+              }))
+            }
+          }
         ])
       }
     } else {
@@ -76,7 +112,8 @@ const RegisterScreen = () => {
 
   return (
     <>
-      <Header title={'Đăng ký tài khoản'} isMenu={false} disableThreeDot/>
+      <Loading2 text='Vui lòng đợi giây lát...' isVisible={onImageUpload} />
+      <Header title={'Đăng ký tài khoản'} isMenu={false} disableThreeDot />
       <View style={styles.container}>
         {/* Background Image or any travel-themed design */}
         {/* Replace 'BackgroundComponent' with your background design component */}
@@ -85,6 +122,12 @@ const RegisterScreen = () => {
           source={imgs.background_img2}
           style={{ flex: 1, width: SCREEN_WIDTH, justifyContent: 'center' }}
         >
+          <TouchableOpacity onPress={pickImage} style={{justifyContent: 'center', alignItems:'center'}}>
+            <Image
+              source={{ uri: imgurl }}
+              style={styles.avatar}
+            />
+          </TouchableOpacity>
           <View style={styles.formContainer}>
             <TextInput
               label={InputLabel('Name')}
@@ -144,7 +187,7 @@ const RegisterScreen = () => {
                 />
               }
             />
-            <View style={{paddingVertical:10}} />
+            <View style={{ paddingVertical: 10 }} />
             <Button mode="contained" style={{ backgroundColor: '#7a62fe', paddingVertical: scaleFactor(5) }} onPress={async () => {
               await checkUserExist(username)
             }}>
@@ -179,7 +222,13 @@ const styles = StyleSheet.create({
   },
   labelColor: {
     color: Color.BORDER_DARK
-  }
+  },
+  avatar: {
+    width: 120,
+    height: 120,
+    borderRadius: 50,
+    // marginRight: 16,
+  },
 });
 
 export default RegisterScreen;

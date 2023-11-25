@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		paddingHorizontal: scaleFactor(10),
-		// backgroundColor: '#FAFAFC'
+		backgroundColor: '#FAFAFC'
 		// justifyContent: 'center',
 		// alignItems: 'center'
 	},

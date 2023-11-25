@@ -25,7 +25,7 @@ const BottomTabNavigator = () => {
       case 'Scan QR':
         return <Icon type='MaterialCommunityIcons' name={'qrcode-scan'} size={scaleFactor(35)} color={color} />;
       case 'Quản Lý Địa Điểm':
-        return <Icon type='Entypo' name={'location'} size={scaleFactor(35)} color={color} />;
+        return <Icon type='Entypo' name={'location'} size={size} color={color} />;
       case 'Notification':
         return <Icon type='MaterialCommunityIcons' name={'bell-outline'} size={size} color={color} />;
       case 'Settings':

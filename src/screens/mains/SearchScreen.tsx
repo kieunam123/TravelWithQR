@@ -1,41 +1,120 @@
 import { Alert, StyleSheet, Text, View } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
-import { Header, SearchBox2 } from '~/components/sections'
-import { FlatListCommon, SafeView } from '~/components/commons'
+import React, { useCallback, useEffect, useState, useRef } from 'react'
+import { Column, Header, Row, SearchBox2 } from '~/components/sections'
+import { Button, DateRow, Dropdown, FlatListCommon, SafeView } from '~/components/commons'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '~/redux/reducers'
 import { useIsFocused } from '@react-navigation/native'
-import { IUser } from '~/apis/types.service'
-import { UserItem } from '~/containers/master'
+import { ILocation, ISearchCommon, IUser } from '~/apis/types.service'
+import { LocationItemUser, UserItem } from '~/containers/master'
 import MasterActions from '~/redux/master/master.actions'
 import { goToScreen } from '~/helpers/UtilitiesHelper'
 import ScreenType from '~/navigations/screen.constant'
+import { Formik, FormikProps } from 'formik'
+import { Colors } from '~/configs'
+import { convertStringToDate } from '~/helpers/DatetimeHelpers'
+import { FROM_DATE, TO_DATE } from '~/configs/initializeVariable'
+
+export interface IMonitoringFilterModel {
+	fromDate: string;
+	toDate: string;
+	regionId: string;
+	position: string;
+}
 
 const SearchScreen = () => {
 	const { userParams } = useSelector((state: RootState) => state.global);
-	const { User } = useSelector((state: RootState) => state.master);
+	const { User, locations } = useSelector((state: RootState) => state.master);
 	const isFocused = useIsFocused();
 	const dispatch = useDispatch();
-  const [userlist, setUserList] = useState<IUser[]>([]);
+	const [userlist, setUserList] = useState<IUser[]>([]);
+	const [isFilter, setIsFilter] = useState<boolean>(true);
 	const handleGetUser = useCallback(() => {
-    dispatch(MasterActions.getUser());
-  }, [dispatch])
+		dispatch(MasterActions.getUser());
+	}, [dispatch])
+
+	const modelSearch = {
+		fromdate: FROM_DATE,
+		todate: TO_DATE,
+		category: 'all',
+		stars: 0,
+		country: 'all'
+	}
+
+	const starsMenu: ISearchCommon[] = [
+		{ label: 'Tất cả', value: 0, keySearch: '0' },
+		{ label: '5 sao', value: 5, keySearch: '5' },
+		{ label: '4 sao', value: 4, keySearch: '4' },
+		{ label: '3 sao', value: 3, keySearch: '3' },
+		{ label: '2 sao', value: 2, keySearch: '2' },
+		{ label: '1 sao', value: 1, keySearch: '1' },
+	]
 
 	useEffect(() => {
 		if (isFocused) {
 			if (userParams.usertype !== 'admin') {
-				
+
 			} else {
 				handleGetUser();
 			}
 		} else {
-			
+
 		}
 	}, [isFocused, handleGetUser]);
 
 	useEffect(() => {
-    setUserList(User);
-  }, [User]);
+		setUserList(User);
+	}, [User]);
+
+	const categorylist = () => {
+		let categoryMenu: ISearchCommon[] = [];
+		let num: number = 0
+		categoryMenu.push({
+			label: 'Tất cả',
+			value: 'all',
+			keySearch: 'all tat ca'
+		})
+		let stringArray: string[] = []
+		for (let i in locations) {
+			const item = locations[i]
+			num = num + 1;
+			stringArray.push(item.category)
+		}
+		const uniqueArray: string[] = [...new Set(stringArray)];
+		uniqueArray.forEach((item, index) => {
+			return categoryMenu.push({
+				label: item,
+				value: `${item}`,
+				keySearch: `${item} ${index}`
+			})
+		})
+		return categoryMenu;
+	}
+
+	const countryList = () => {
+		let countryMenu: ISearchCommon[] = [];
+		let num: number = 0
+		countryMenu.push({
+			label: 'Tất cả',
+			value: 'all',
+			keySearch: 'all tat ca'
+		})
+		let stringArray: string[] = []
+		for (let i in locations) {
+			const item = locations[i]
+			num = num + 1;
+			stringArray.push(item.country)
+		}
+		const uniqueArray: string[] = [...new Set(stringArray)];
+		uniqueArray.forEach((item, index) => {
+			return countryMenu.push({
+				label: item,
+				value: `${item}`,
+				keySearch: `${item} ${index}`
+			})
+		})
+		return countryMenu;
+	}
 
 	return (
 		<SafeView>
@@ -64,9 +143,11 @@ const SearchScreen = () => {
 								usertype={item.usertype ?? 'user'}
 								onPress={() => {
 									Alert.alert(`USERID ${item.id}`, 'Lựa chọn hành động', [
-										{ text: 'Cập nhật', onPress: () => {
-											goToScreen(ScreenType.Detail.UpdateUser, {user: item})
-										 } },
+										{
+											text: 'Cập nhật', onPress: () => {
+												goToScreen(ScreenType.Detail.UpdateUser, { user: item })
+											}
+										},
 										{
 											text: 'Xoá', onPress: () => {
 												dispatch(MasterActions.deleteUser(`${item.id}`))
@@ -81,6 +162,123 @@ const SearchScreen = () => {
 						)}
 					/>
 
+				</>}
+				{userParams.usertype !== 'admin' && <>
+					<View style={{ padding: 10, marginTop: -20 }}>
+						<SearchBox2
+							placeholder={'Tìm kiếm địa điểm'}
+							dataSource={[]}
+							accessor={'key'}
+							stringtext={() => { 
+								setIsFilter(true)
+							}}
+						/>
+					</View>
+					{isFilter && <View style={{ flex: 1 }}>
+
+						<Formik
+							enableReinitialize
+							initialValues={modelSearch}
+							onSubmit={(value) => {
+								setIsFilter(false)
+							}}>
+							{({ values, handleSubmit }) => {
+								return (
+									<View style={{
+										marginHorizontal: 10,
+										backgroundColor: Colors.WHITE,
+										marginTop: 10,
+										borderRadius: 15
+									}}>
+										<Row>
+											<Column>
+												<DateRow
+													label={'Từ ngày'}
+													date={convertStringToDate(values.fromdate)}
+													name="fromdate"
+													type="date"
+												/>
+											</Column>
+											<Column>
+												<DateRow
+													label={'Đến ngày'}
+													date={convertStringToDate(values.todate)}
+													name="todate"
+													type="date"
+												/>
+											</Column>
+										</Row>
+										<Row>
+											<Column>
+												<Dropdown
+													label={'Lọc theo loại địa điểm'}
+													name="category"
+													data={categorylist()}
+													selectedValue={values.category}
+													searchPlaceholder="Search..."
+												/>
+											</Column>
+										</Row>
+										<Row>
+											<Column>
+												<Dropdown
+													label={'Lọc theo đánh giá'}
+													name="stars"
+													data={starsMenu}
+													selectedValue={values.stars}
+													searchPlaceholder="Search..."
+												/>
+											</Column>
+										</Row>
+										<Row>
+											<Column>
+												<Dropdown
+													label={'Lọc theo quốc gia'}
+													name="country"
+													data={countryList()}
+													selectedValue={values.country}
+													searchPlaceholder="Search..."
+												/>
+											</Column>
+										</Row>
+
+										<Row>
+											<Column style={{ justifyContent: 'center', alignItems: 'center' }}>
+												<Button
+													iconLeft={{ type: 'AntDesign', name: 'filter' }}
+													title={'Tìm kiếm'}
+													color={Colors.WHITE}
+													radius={20}
+													onPress={handleSubmit}
+												/>
+											</Column>
+										</Row>
+									</View>
+								);
+							}}
+						</Formik>
+					</View>}
+					{!isFilter && <View>
+
+						<FlatListCommon
+							onRefresh={() => { }}
+							isShowVertical={true}
+							data={locations}
+							renderItem={({ item }: { item: ILocation }) => (
+								<LocationItemUser
+									name={item.name}
+									img={item.image_links}
+									country={item.country}
+									category={item.category}
+									date_created={item.date_created}
+									date_updated={item.date_updated}
+									id={item.id ?? 0}
+									short_description={item.short_description ?? ''}
+									onPress={() => goToScreen(ScreenType.Detail.LocationDetail, {Location: item})}
+								/>
+							)}
+						/>
+					</View>}
 				</>}
 			</View>
 

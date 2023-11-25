@@ -15,18 +15,18 @@ import { goToScreen, scaleFactor } from '~/helpers/UtilitiesHelper'
 import { ILocation } from '~/apis/types.service'
 
 const QRScanScreen = () => {
-	const { locations } = useSelector((state: RootState) => state.master);
+	const { locations, places } = useSelector((state: RootState) => state.master);
 	const { userParams } = useSelector((state: RootState) => state.global);
 	const isFocused = useIsFocused();
 	const dispatch = useDispatch();
 	const [isScanQR, setIsScanQR] = useState<boolean>(false);
-	const [locationList, setLoactionList] = useState<ILocation[]>([]);
+	const [locationList, setLocationList] = useState<ILocation[]>([]);
 	const handleGetLocation = useCallback(() => {
 		dispatch(MasterActions.getLocation())
 	}, [dispatch]);
 
 	useEffect(() => {
-		setLoactionList(locations);
+		setLocationList(locations);
 	}, [locations]);
 
 	const camera = async () => {
@@ -41,8 +41,25 @@ const QRScanScreen = () => {
 		let locationFound: ILocation | undefined
 		if (item !== undefined) {
 			setIsScanQR(false);
-			for (let i = 0; i < locationList.length; i += 1) {
-				const location = locationList.find((p) => `${p.id}` === item);
+			let locationAndPlace: ILocation[] = [];
+			locationAndPlace.push(...locationList)
+			places.forEach((place) => {
+				return locationAndPlace.push({
+					id: place.placeid,
+					country: place.country ?? '',
+					category: place.category ?? '',
+					description: place.description,
+					short_description: place.short_description ?? '',
+					date_created: '',
+					date_updated: '',
+					name: place.name,
+					rate: place.rating,
+					image_links: place.image_link ?? [],
+					places: []
+				})
+			})
+			for (let i = 0; i < locationAndPlace.length; i += 1) {
+				const location = locationAndPlace.find((p) => `${p.id}` === item);
 				if (location) {
 					locationFound = location
 				}
@@ -70,7 +87,7 @@ const QRScanScreen = () => {
 				text: 'Xoá', onPress: () => {
 					dispatch(MasterActions.deleteLocation(`${item.id}`));
 					const updatedArray = locationList.filter(obj => obj.id !== item.id);
-					setLoactionList([...updatedArray])
+					setLocationList([...updatedArray])
 				}
 			},
 			{ text: 'Huỷ bỏ', onPress: () => { } }

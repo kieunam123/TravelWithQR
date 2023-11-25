@@ -1,9 +1,9 @@
-import { Dimensions, FlatList, Image, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, FlatList, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useRef, useState } from 'react'
 import { Button, FlatListCommon, Icon, ModalCommon, PrintButton, SafeView, TextCustom } from '~/components/commons'
 import { Container, Header, Row } from '~/components/sections'
 import { Colors } from '~/configs'
-import { scaleFactor } from '~/helpers/UtilitiesHelper'
+import { goToScreen, scaleFactor } from '~/helpers/UtilitiesHelper'
 import imgs from '~/assets/imgs'
 import { LocationItem } from '~/containers/master'
 import { ILocationPlace } from '~/apis/types.service'
@@ -12,6 +12,7 @@ import QRCode from "react-native-qrcode-svg";
 import { Svg } from 'react-native-svg';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
+import ScreenType from '~/navigations/screen.constant'
 
 const LocationDetail = ({ route }) => {
   const { Location } = route.params ?? '';
@@ -94,6 +95,9 @@ const LocationDetail = ({ route }) => {
                 <TextCustom isSmall>{`${Location.rate} stars`}</TextCustom>
               </View>
             </View>
+            <View style={{paddingBottom: 5}}>
+              <TextCustom isSmall>{`${Location.short_description ?? ''}`}</TextCustom>
+            </View>
             <View style={styles.LocationDetail}>
               <View style={styles.LocationPin}>
                 <Icon
@@ -102,6 +106,10 @@ const LocationDetail = ({ route }) => {
                   size={scaleFactor(25)}
                 />
                 <TextCustom isSmall bold style={{ paddingHorizontal: 5 }}>{Location.country}</TextCustom>
+              </View>
+              <View style={styles.LocationPin}>
+                <TextCustom isSmall bold> Category: </TextCustom>
+                <TextCustom isSmall>{Location.category ?? ''}</TextCustom>
               </View>
               <TextCustom style={{ fontSize: 15 }}>{Location.description}</TextCustom>
             </View>
@@ -133,7 +141,7 @@ const LocationDetail = ({ route }) => {
                 horizontal
                 data={Location.places.sort((a, b) => b.rating - a.rating)}
                 renderItem={({ item }: { item: ILocationPlace }) => (
-                  <View style={{ paddingHorizontal: 5 }}>
+                  <TouchableOpacity style={{ paddingHorizontal: 5 }} onPress={()=>goToScreen(ScreenType.Detail.PlaceDetail, {Place: item})}>
                     <LocationItem
                       title={item.name}
                       img={item.image_link[0] ?? ''}
@@ -141,7 +149,7 @@ const LocationDetail = ({ route }) => {
                       description={item.description}
                       country={item.country ?? ''}
                     />
-                  </View>
+                  </TouchableOpacity>
                 )}
               />
             </View>}

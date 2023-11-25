@@ -1,6 +1,6 @@
 import { Alert, Dimensions, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
-import { FlatListCommon, Icon, Input, SafeView, TextCustom } from '~/components/commons';
+import { Button, FlatListCommon, Icon, Input, SafeView, TextCustom } from '~/components/commons';
 import { Column, Header, Row } from '~/components/sections';
 import { Colors, Sizes, fonts } from '~/configs';
 import { chunkArray, convertStringToNumber, scaleFactor } from '~/helpers/UtilitiesHelper';
@@ -9,9 +9,14 @@ import { Formik } from 'formik';
 import { ILocation, ILocationPlace } from '~/apis/types.service';
 import { ImageUpload, LocationItem } from '~/containers/master';
 import Loading2 from '~/containers/Loading2';
+import { useDispatch } from 'react-redux';
+import MasterActions from '~/redux/master/master.actions';
+import { getCurrentDateToStringDDMMYYY } from '~/helpers/DatetimeHelpers';
+import { LocationValidates } from '~/validates/LocationValidates';
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const AddLocationScreen = ({ route }) => {
+  const dispatch = useDispatch();
   const { Location, type } = route.params ?? '';
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isAddPlaces, setIsAddPlaces] = useState<boolean>(false);
@@ -66,8 +71,8 @@ const AddLocationScreen = ({ route }) => {
     category: Location?.category ?? '',
     description: Location?.description ?? '',
     short_description: Location?.short_description ?? '',
-    date_created: Location?.date_created ?? '',
-    date_updated: Location?.date_updated ?? '',
+    date_created: Location?.date_created ?? getCurrentDateToStringDDMMYYY(),
+    date_updated: type === 'add' ? '' : getCurrentDateToStringDDMMYYY(),
     name: Location?.name ?? '',
     rate: Location?.rate ?? '',
     image_links: Location?.image_links ?? [],
@@ -77,10 +82,17 @@ const AddLocationScreen = ({ route }) => {
   return (
     <Formik
       initialValues={locationObj}
+      validationSchema={LocationValidates}
       onSubmit={(values) => {
-        console.log(JSON.stringify(values, undefined, 2));
-
-      }}>{({ values, handleSubmit, setFieldValue }) => {
+        const objAdd = { ...values, id: Date.now() }
+        if (type === 'add') {
+          console.log(JSON.stringify(objAdd, undefined, 2));
+          dispatch(MasterActions.createLocation(values))
+        } else {
+          console.log(JSON.stringify(values, undefined, 2));
+          dispatch(MasterActions.updateLocation(`${Location.id}`, values))
+        }
+      }}>{({ values, handleSubmit, setFieldValue, isValid }) => {
         async function updatePlaces() {
           if (placesIndex !== undefined) {
             let newPlaces: ILocationPlace[] = values.places;
@@ -161,7 +173,7 @@ const AddLocationScreen = ({ route }) => {
                       }}
                     />
                   </View>
-                  {values.name !== '' && <View style={styles.placesToVisit}>
+                  {type !== 'add' && <View style={styles.placesToVisit}>
                     <Text style={{ fontSize: 18, fontWeight: 'bold', paddingBottom: 10 }}>ĐỊA ĐIỂM THAM QUAN</Text>
                     <View style={styles.PhotoContainer}>
                       {Rows(values.places).map((item, index) => {
@@ -210,7 +222,7 @@ const AddLocationScreen = ({ route }) => {
                   </View>}
                 </View>
               </ScrollView>
-              <View style={{ backgroundColor: Colors.SUCCESS, borderColor: Colors.BORDER_TWO, borderWidth: 1, alignItems: 'center' }}>
+              {/* <View style={{ backgroundColor: Colors.SUCCESS, borderColor: Colors.BORDER_TWO, borderWidth: 1, alignItems: 'center' }}>
                 <Row>
                   <Column>
                     <Pressable onPress={() => handleSubmit()} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, flexDirection: 'row' }}>
@@ -225,7 +237,20 @@ const AddLocationScreen = ({ route }) => {
                     </Pressable>
                   </Column>
                 </Row>
-              </View>
+              </View> */}
+              <Row>
+                <Column style={{ justifyContent: 'center' }}>
+                  <Button
+                    disabled={!isValid}
+                    bgColor={Colors.SUCCESS}
+                    title={type === 'add' ? 'TẠO' : 'CẬP NHẬT'}
+                    radius={10}
+                    iconRight={{ type: 'Feather', name: 'check-circle' }}
+                    color={Colors.WHITE}
+                    onPress={handleSubmit}
+                  />
+                </Column>
+              </Row>
             </SafeView>}
             {isAddPlaces && <SafeView>
               <Loading2 text='Vui lòng đợi giây lát...' isVisible={isLoading} />

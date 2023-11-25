@@ -1,6 +1,6 @@
 import { all, call, fork, put, takeEvery } from "redux-saga/effects";
-import { ICreateUser, IDeleteUser, IGetLocation, IGetUser, IUpdateUser, Types } from "./master.types";
-import { CreateUserData, deleteUser, getLocation, getUser, updateUser } from "~/apis/master.service";
+import { ICreateLocation, ICreateUser, IDeleteUser, IDelteLocation, IGetLocation, IGetUser, IUpdateLocation, IUpdateUser, Types } from "./master.types";
+import { CreateUserData, createLocation, deleteLocation, deleteUser, getLocation, getUser, updateLocation, updateUser } from "~/apis/master.service";
 import { IApiResponse, ILocation, ILocationPlace, IUser } from "~/apis/types.service";
 import GlobalActions from "../global/global.actions";
 import MasterActions from "./master.actions";
@@ -20,11 +20,11 @@ function* handleCreateUser({ payload: IUser }: ICreateUser) {
     const nav: INavigateScreen = {
       isNavigate: true,
       screen: ScreenType.Main.Login,
-      param: {userRegistered: IUser}
+      param: { userRegistered: IUser }
     }
     onSagaNavigate(nav)
   } else {
-    if(response.msg){
+    if (response.msg) {
       yield put(GlobalActions.openErrorInfoModal(`Lỗi ${response.status}\nChi tiết: ${response.msg}`));
     }
   }
@@ -45,7 +45,7 @@ function* handleGetData({ payload }: IGetUser) {
     })
     yield put(MasterActions.getUserSuccess(User));
   } else {
-    if(response.msg){
+    if (response.msg) {
       yield put(GlobalActions.openErrorInfoModal(`Lỗi ${response.status}\nChi tiết: ${response.msg}`));
     }
   }
@@ -61,7 +61,7 @@ function* handleUpdateData({ payload }: IUpdateUser) {
   if (response.status === 'Success') {
     yield put(GlobalActions.openErrorInfoModal(`Cập nhật dữ liệu thành công`));
   } else {
-    if(response.msg){
+    if (response.msg) {
       yield put(GlobalActions.openErrorInfoModal(`Lỗi ${response.status}\nChi tiết: ${response.msg}`));
     }
   }
@@ -76,7 +76,7 @@ function* handleDeleteData({ payload }: IDeleteUser) {
   if (response.status === 'Success') {
     yield put(GlobalActions.openErrorInfoModal('Xoá dữ liệu thành công'));
   } else {
-    if(response.msg){
+    if (response.msg) {
       yield put(GlobalActions.openErrorInfoModal(`Lỗi ${response.status}\nChi tiết: ${response.msg}`));
     }
   }
@@ -96,14 +96,59 @@ function* handleGetLocation({ payload }: IGetLocation) {
       locations.forEach((item) => {
         if (item.places[0] !== undefined) {
           item.places.forEach((place) => {
-            places.push({...place, city: item.name, country: item.country})
+            places.push({ ...place, city: item.name, country: item.country })
           })
         }
       })
       yield put(MasterActions.getPlacesSuccess(places));
     }
   } else {
-    if(response.msg){
+    if (response.msg) {
+      yield put(GlobalActions.openErrorInfoModal(`Lỗi ${response.status}\nChi tiết: ${response.msg}`));
+    }
+  }
+}
+
+function* handleDeleteLocation({ payload }: IDelteLocation) {
+  const { id } = payload;
+  const response: IApiResponse = yield call(
+    deleteLocation,
+    id
+  );
+  if (response.status === 'Success') {
+    yield put(GlobalActions.openErrorInfoModal('Xoá dữ liệu thành công'));
+  } else {
+    if (response.msg) {
+      yield put(GlobalActions.openErrorInfoModal(`Lỗi ${response.status}\nChi tiết: ${response.msg}`));
+    }
+  }
+}
+
+function* handleCreateLocation({ payload: ILocation }: ICreateLocation) {
+  const response: IApiResponse = yield call(
+    createLocation,
+    ILocation
+  );
+  if (response.status === 'Success') {
+    yield put(GlobalActions.openErrorInfoModal(`Tạo địa điểm thành công`));
+  } else {
+    if (response.msg) {
+      yield put(GlobalActions.openErrorInfoModal(`Lỗi ${response.status}\nChi tiết: ${response.msg}`));
+    }
+  }
+}
+
+function* handleUpdateLocation({ payload }: IUpdateLocation) {
+  const { id, dataUpdate } = payload;
+  const response: IApiResponse = yield call(
+    updateLocation,
+    id,
+    dataUpdate,
+  );
+  if (response.status === 'Success') {
+    yield put(GlobalActions.openErrorInfoModal(`Cập nhật dữ liệu thành công`));
+  } else {
+    if (response.msg) {
       yield put(GlobalActions.openErrorInfoModal(`Lỗi ${response.status}\nChi tiết: ${response.msg}`));
     }
   }
@@ -133,6 +178,18 @@ function* watchGetLocation() {
   yield takeEvery(Types.MASTER_GET_LOCATION, safe(handleGetLocation))
 }
 
+function* watchDeleteLocation() {
+  yield takeEvery(Types.MASTER_DELETE_LOCATION, safe(handleDeleteLocation))
+}
+
+function* watchCreateLocation() {
+  yield takeEvery(Types.MASTER_CREATE_LOCATION, safe(handleCreateLocation))
+}
+
+function* watchUpdateLocation() {
+  yield takeEvery(Types.MASTER_UPDATE_LOCATION, safe(handleUpdateLocation))
+}
+
 //#endregion
 
 
@@ -142,6 +199,9 @@ export default function* masterSaga() {
     fork(watchGetData),
     fork(watchUpdateData),
     fork(watchDeleteData),
-    fork(watchGetLocation)
+    fork(watchGetLocation),
+    fork(watchDeleteLocation),
+    fork(watchCreateLocation),
+    fork(watchUpdateLocation),
   ]);
 }

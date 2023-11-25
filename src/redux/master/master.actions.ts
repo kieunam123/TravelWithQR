@@ -4,11 +4,14 @@ import {DropdownItemType} from '../../commons/types';
 
 import {
 
+  ICreateLocation,
   ICreateUser,
   IDeleteUser,
+  IDelteLocation,
   IGetLocation,
   IGetUser,
   IGetUserSuccess,
+  IUpdateLocation,
   IUpdateUser,
   Types,
 
@@ -66,8 +69,25 @@ const MasterActions = {
       type: Types.MASTER_GET_PLACES_SUCCESS,
       payload: {places}
     }
+  },
+  deleteLocation: (id: string): IDelteLocation => {
+    return {
+      type: Types.MASTER_DELETE_LOCATION,
+      payload: {id}
+    }
+  },
+  createLocation: (modal: ILocation): ICreateLocation => {
+    return {
+      type: Types.MASTER_CREATE_LOCATION,
+      payload: modal
+    }
+  },
+  updateLocation: (id: string, dataUpdate: ILocation): IUpdateLocation => {
+    return {
+      type: Types.MASTER_UPDATE_LOCATION,
+      payload: {id, dataUpdate}
+    }
   }
-
 }
 
 export default MasterActions;

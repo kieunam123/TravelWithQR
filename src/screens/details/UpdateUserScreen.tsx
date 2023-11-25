@@ -8,6 +8,7 @@ import MasterActions from '~/redux/master/master.actions';
 import { useDispatch } from 'react-redux';
 import { Card } from '~/components/cards';
 import { Colors } from '~/configs';
+import { UserValidates } from '~/validates/UserValidates';
 
 const UpdateUserScreen = ({ route }) => {
   const dispatch = useDispatch();
@@ -31,13 +32,14 @@ const UpdateUserScreen = ({ route }) => {
       <Header title={'Cập nhật thông tin user'} isMenu={false} disableThreeDot noShadow />
       <Container style={{ flex: 1, paddingTop: 10 }}>
         <Formik
+          validationSchema={UserValidates}
           initialValues={userModel}
           onSubmit={(values) => {
             const obj: IUser = { ...userModel, ...values }
             console.log(obj);
             dispatch(MasterActions.updateUser(user.id, values))
           }}>
-          {({ values, handleSubmit, setFieldValue }) => {
+          {({ values, handleSubmit, setFieldValue, isValid }) => {
             return (
               <Container isIncludeScrollView>
                 <Card>
@@ -101,6 +103,7 @@ const UpdateUserScreen = ({ route }) => {
                 <Row>
                   <Column style={{ justifyContent: 'center' }}>
                     <Button
+                      disabled={!isValid}
                       title={'Cập nhật thông tin'}
                       radius={10}
                       iconRight={{ type: 'AntDesign', name: 'checkcircle' }}

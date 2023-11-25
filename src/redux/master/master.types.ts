@@ -18,7 +18,10 @@ export enum Types {
   MASTER_UPDATE_TEST = 'MASTER_UPDATE_TEST',
   MASTER_GET_LOCATION = 'MASTER_GET_LOCATION',
   MASTER_GET_LOCATION_SUCCESS = 'MASTER_GET_LOCATION_SUCCESS',
-  MASTER_GET_PLACES_SUCCESS = 'MASTER_GET_PLACES_SUCCESS'
+  MASTER_GET_PLACES_SUCCESS = 'MASTER_GET_PLACES_SUCCESS',
+  MASTER_DELETE_LOCATION = 'MASTER_DELETE_LOCATION',
+  MASTER_CREATE_LOCATION = 'MASTER_CREATE_LOCATION',
+  MASTER_UPDATE_LOCATION = 'MASTER_UPDATE_LOCATION',
   
 }
 
@@ -60,6 +63,21 @@ export interface IGetLocationSuccess {
 export interface IGetPlacesSuccess {
   type: Types.MASTER_GET_PLACES_SUCCESS;
   payload: {places: ILocationPlace[]}
+}
+
+export interface IDelteLocation {
+  type: Types.MASTER_DELETE_LOCATION;
+  payload: {id: string}
+}
+
+export interface ICreateLocation {
+  type: Types.MASTER_CREATE_LOCATION;
+  payload: ILocation
+}
+
+export interface IUpdateLocation {
+  type: Types.MASTER_UPDATE_LOCATION;
+  payload: {id: string, dataUpdate: ILocation}
 }
 
 export type MasterActionsType = 

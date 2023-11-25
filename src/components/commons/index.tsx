@@ -23,6 +23,8 @@ import InputWithoutFormik from "./InputWithoutFormik";
 import Radio from "./Radio";
 import RadioGroup from "./RadioGroup";
 import Dropdown2 from "./Dropdown2";
+import BarCharts from "./BarCharts";
+import PieCharts from "./PieCharts";
 export {
     Accordion,
     SafeView,
@@ -48,5 +50,7 @@ export {
     PrintButton,
     InputWithoutFormik,
     Radio,
-    RadioGroup
+    RadioGroup,
+    BarCharts,
+    PieCharts
 };

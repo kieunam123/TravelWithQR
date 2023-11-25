@@ -20,10 +20,14 @@ const QRScanScreen = () => {
 	const isFocused = useIsFocused();
 	const dispatch = useDispatch();
 	const [isScanQR, setIsScanQR] = useState<boolean>(false);
-
+	const [locationList, setLoactionList] = useState<ILocation[]>([]);
 	const handleGetLocation = useCallback(() => {
 		dispatch(MasterActions.getLocation())
 	}, [dispatch]);
+
+	useEffect(() => {
+		setLoactionList(locations);
+	}, [locations]);
 
 	const camera = async () => {
 		const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -37,8 +41,8 @@ const QRScanScreen = () => {
 		let locationFound: ILocation | undefined
 		if (item !== undefined) {
 			setIsScanQR(false);
-			for (let i = 0; i < locations.length; i += 1) {
-				const location = locations.find((p) => `${p.id}` === item);
+			for (let i = 0; i < locationList.length; i += 1) {
+				const location = locationList.find((p) => `${p.id}` === item);
 				if (location) {
 					locationFound = location
 				}
@@ -61,8 +65,14 @@ const QRScanScreen = () => {
 
 	const OnLocationPress = (item: ILocation) => {
 		Alert.alert(`${item.name}`, `Vui lòng lựa chọn hành động`, [
-			{ text: 'Cập nhật', onPress: () => goToScreen(ScreenType.Detail.AddLocation, {Location: item, type: 'update'}) },
-			{ text: 'Xoá', onPress: () => { } },
+			{ text: 'Cập nhật', onPress: () => goToScreen(ScreenType.Detail.AddLocation, { Location: item, type: 'update' }) },
+			{
+				text: 'Xoá', onPress: () => {
+					dispatch(MasterActions.deleteLocation(`${item.id}`));
+					const updatedArray = locationList.filter(obj => obj.id !== item.id);
+					setLoactionList([...updatedArray])
+				}
+			},
 			{ text: 'Huỷ bỏ', onPress: () => { } }
 		])
 	}
@@ -95,7 +105,7 @@ const QRScanScreen = () => {
 					<FlatListCommon
 						onRefresh={() => { }}
 						isShowVertical={true}
-						data={locations}
+						data={locationList}
 						renderItem={({ item }: { item: ILocation }) => (
 							<LocationItemAdmin
 								name={item.name}
@@ -111,7 +121,7 @@ const QRScanScreen = () => {
 						)}
 					/>
 					<PrintButton style={{ bottom: scaleFactor(125) }} onPress={() => { }} iconName='export' iconType='Entypo' />
-					<PrintButton style={{ bottom: scaleFactor(50) }} onPress={() => goToScreen(ScreenType.Detail.AddLocation, {type: 'add'})} iconName='plus' iconType='AntDesign' />
+					<PrintButton style={{ bottom: scaleFactor(50) }} onPress={() => goToScreen(ScreenType.Detail.AddLocation, { type: 'add' })} iconName='plus' iconType='AntDesign' />
 				</>}
 			</View>}
 		</SafeView>

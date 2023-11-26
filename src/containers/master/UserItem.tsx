@@ -47,8 +47,8 @@ const UserItem: React.FC<IProps> = (props) => {
             </View>
             <View style={{ flex: 2 }}>
               <View style={styles.rowItem}>
-                <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>User ID</TextCustom>
-                <TextCustom bold style={styles.rowText}>{props.id}</TextCustom>
+                <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>Họ tên</TextCustom>
+                <TextCustom bold style={styles.rowText}>{props.name}</TextCustom>
               </View>
               <View style={styles.rowItem}>
                 <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>Username</TextCustom>
@@ -57,8 +57,8 @@ const UserItem: React.FC<IProps> = (props) => {
                 </TextCustom>
               </View>
               <View style={styles.rowItem}>
-                <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>Họ tên</TextCustom>
-                <TextCustom style={styles.rowText}>{props.name}</TextCustom>
+                <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>User ID</TextCustom>
+                <TextCustom style={styles.rowText}>{props.id}</TextCustom>
               </View>
               <View style={styles.rowItem}>
                 <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>Số điện thoại</TextCustom>

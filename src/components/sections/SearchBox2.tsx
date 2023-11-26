@@ -12,6 +12,7 @@ export interface ISearchBoxProps<T> {
   dataSource?: T[];
   accessor: keyof T;
   stringtext?:any;
+  onFilter?: ()=>void
 }
 
 // function SearchBox<T>({placeholder, onSearch}: ISearchBoxProps<T>) {
@@ -21,7 +22,8 @@ const SearchBox2 = <T extends {}>({
   accessor,
   onSearch,
   onPress,
-  stringtext
+  stringtext,
+  onFilter
 }: ISearchBoxProps<T>) => {
   const [text, setText] = useState<string>('');
   const [searchText, setSearchText] = useState("");
@@ -53,7 +55,7 @@ const SearchBox2 = <T extends {}>({
         // onEndEditing={text === '' ? onPress : ()=>onChangeText(text)}
         onSubmitEditing={text === '' ? onPress : ()=>onChangeText(text)}
       />
-      <Pressable style={styles.searchBoxBtn} onPress={text === '' ? onPress : ()=>onChangeText(text)}>
+      <Pressable style={styles.searchBoxBtn} onPress={onFilter}>
         <AntDesign name="search1" style={styles.searchBoxIcon} />
       </Pressable>
     </View>

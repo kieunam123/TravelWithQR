@@ -8,7 +8,7 @@ import { useIsFocused } from '@react-navigation/native'
 import { ILocation, ISearchCommon, IUser } from '~/apis/types.service'
 import { LocationItemUser, UserItem } from '~/containers/master'
 import MasterActions from '~/redux/master/master.actions'
-import { goToScreen } from '~/helpers/UtilitiesHelper'
+import { goToScreen, removeUnicode } from '~/helpers/UtilitiesHelper'
 import ScreenType from '~/navigations/screen.constant'
 import { Formik, FormikProps } from 'formik'
 import { Colors } from '~/configs'
@@ -29,9 +29,38 @@ const SearchScreen = () => {
 	const dispatch = useDispatch();
 	const [userlist, setUserList] = useState<IUser[]>([]);
 	const [isFilter, setIsFilter] = useState<boolean>(true);
+
 	const handleGetUser = useCallback(() => {
 		dispatch(MasterActions.getUser());
 	}, [dispatch])
+
+	const listLocationAndPlaces = () => {
+		let locationAndPlace: ILocation[] = [];
+		locationAndPlace.push(...locations)
+		places.forEach((place) => {
+			return locationAndPlace.push({
+				id: place.placeid,
+				country: place.country ?? '',
+				category: place.category ?? '',
+				description: place.description,
+				short_description: place.short_description ?? '',
+				date_created: '',
+				date_updated: '',
+				name: place.name,
+				rate: place.rating,
+				image_links: place.image_link ?? [],
+				places: []
+			})
+		});
+		const data: ILocation[] =  locationAndPlace.map((p) => {
+			const keySearch = `${removeUnicode(p.name)} ${p.rate} ${p.country} ${p.category}`
+			return {...p, key: keySearch}
+		})
+		return data;
+	}
+
+	const locationsPlaces: ILocation[] = listLocationAndPlaces();
+	const [locationList, setLocationList] = useState<ILocation[]>(locationsPlaces);
 
 	const modelSearch = {
 		fromdate: FROM_DATE,
@@ -75,8 +104,8 @@ const SearchScreen = () => {
 			keySearch: 'all tat ca'
 		})
 		let stringArray: string[] = []
-		for (let i in locations) {
-			const item = locations[i]
+		for (let i in locationsPlaces) {
+			const item = locationsPlaces[i]
 			num = num + 1;
 			stringArray.push(item.category)
 		}
@@ -100,8 +129,9 @@ const SearchScreen = () => {
 			keySearch: 'all tat ca'
 		})
 		let stringArray: string[] = []
-		for (let i in locations) {
-			const item = locations[i]
+
+		for (let i in locationsPlaces) {
+			const item = locationsPlaces[i]
 			num = num + 1;
 			stringArray.push(item.country)
 		}
@@ -116,25 +146,19 @@ const SearchScreen = () => {
 		return countryMenu;
 	}
 
-	const listLocationAndPlaces = () => {
-		let locationAndPlace: ILocation[] = [];
-		locationAndPlace.push(...locations)
-		places.forEach((place) => {
-			return locationAndPlace.push({
-				id: place.placeid,
-				country: place.country ?? '',
-				category: place.category ?? '',
-				description: place.description,
-				short_description: place.short_description ?? '',
-				date_created: '',
-				date_updated: '',
-				name: place.name,
-				rate: place.rating,
-				image_links: place.image_link ?? [],
-				places: []
-			})
+
+	async function handleSearch(query: string) {
+		let charsToRemove = ['all', '0']
+		let newquery = query;
+		charsToRemove.forEach(char => {
+			newquery = query.replace(new RegExp(char, 'g'), '');
 		});
-		return locationAndPlace
+		const newData = locationsPlaces.filter((item) => {
+			const itemData = item.key!.toUpperCase();
+			const textData = removeUnicode(newquery).toUpperCase();
+			return itemData.indexOf(textData) > -1;
+		});
+		setLocationList(newData)
 	}
 
 	return (
@@ -188,19 +212,20 @@ const SearchScreen = () => {
 					<View style={{ padding: 10, marginTop: -20 }}>
 						<SearchBox2
 							placeholder={'Tìm kiếm địa điểm'}
-							dataSource={[]}
+							dataSource={locationsPlaces}
 							accessor={'key'}
-							stringtext={() => { 
-								setIsFilter(true)
-							}}
+							stringtext={handleSearch}
+							onFilter={()=>setIsFilter(true)}
 						/>
 					</View>
 					{isFilter && <View style={{ flex: 1 }}>
-
 						<Formik
 							enableReinitialize
 							initialValues={modelSearch}
-							onSubmit={(value) => {
+							onSubmit={(values) => {
+								if(values.category === 'all' && values.country === 'all' && `${values.stars}` === '0') {
+									setLocationList(locationsPlaces)
+								} else handleSearch(`${values.category} ${values.country} ${values.stars}`)
 								setIsFilter(false)
 							}}>
 							{({ values, handleSubmit }) => {
@@ -279,12 +304,12 @@ const SearchScreen = () => {
 							}}
 						</Formik>
 					</View>}
-					{!isFilter && <View style={{flex:1}}>
+					{!isFilter && <View style={{ flex: 1 }}>
 
 						<FlatListCommon
-							onRefresh={() => { }}
+							onRefresh={() => setLocationList(locationsPlaces)}
 							isShowVertical={true}
-							data={listLocationAndPlaces()}
+							data={locationList}
 							renderItem={({ item }: { item: ILocation }) => (
 								<LocationItemUser
 									name={item.name}
@@ -296,7 +321,7 @@ const SearchScreen = () => {
 									id={item.id ?? 0}
 									short_description={item.short_description ?? ''}
 									rate={item.rate}
-									onPress={() => goToScreen(ScreenType.Detail.LocationDetail, {Location: item})}
+									onPress={() => goToScreen(ScreenType.Detail.LocationDetail, { Location: item })}
 								/>
 							)}
 						/>

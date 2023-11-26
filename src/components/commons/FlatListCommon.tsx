@@ -14,6 +14,8 @@ export interface IFlatListCommonProps {
   emptyComponent?: React.ReactElement;
   refreshing?: boolean;
   onRefresh?: () => void;
+  setCurrentIndex: (index: number) => void;
+  currentIndex?: number
 }
 
 
@@ -28,6 +30,8 @@ const FlatListCommon: React.FC<IFlatListCommonProps> = ({
   emptyComponent,
   refreshing,
   onRefresh,
+  setCurrentIndex,
+  currentIndex
 }) => {
   const renderSeparatorComponent = (): JSX.Element => {
     return !isSeparator ? <></> : <View style={{height: 20}} />;
@@ -38,10 +42,17 @@ const FlatListCommon: React.FC<IFlatListCommonProps> = ({
       data={data}
       horizontal={horizontal}
       keyExtractor={(_item, index) => `${index}`}
+      initialScrollIndex={currentIndex}
       renderItem={(item) => renderItem(item)}
       showsVerticalScrollIndicator={isShowVertical}
       ItemSeparatorComponent={renderSeparatorComponent}
       contentContainerStyle={contentContainerStyle}
+      showsHorizontalScrollIndicator={false}
+      onMomentumScrollEnd={(event) => {
+        // Calculate the current index based on the scroll position
+        const index = Math.floor(event.nativeEvent.contentOffset.x / event.nativeEvent.layoutMeasurement.width);
+        setCurrentIndex(index);
+      }}
       extraData
       bounces
       ListEmptyComponent={emptyComponent ?? <NotFound />}

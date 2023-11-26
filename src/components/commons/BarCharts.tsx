@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { Colors } from '~/configs'
-import { BarChart } from 'react-native-chart-kit'
+import { BarChart, StackedBarChart } from 'react-native-chart-kit'
 import { scaleFactor } from '~/helpers/UtilitiesHelper'
 
 export interface IProps {
@@ -15,7 +15,7 @@ export interface IProps {
 const BarCharts: React.FC<IProps> = (props: IProps) => {
   return (
     <View>
-      <BarChart
+      {/* <BarChart
         data={{
           labels: props.labels,
           // legend: ['External'],
@@ -32,11 +32,10 @@ const BarCharts: React.FC<IProps> = (props: IProps) => {
         showValuesOnTopOfBars={true}
         withInnerLines={true}
         showBarTops={false}
-        // decimalPlaces={0}
         yAxisLabel=""
         yAxisSuffix=""
-        segments={Math.max(...props.data)}
-
+        segments={5}
+        
         chartConfig={{
           barPercentage: 1,
           decimalPlaces: 0,
@@ -77,6 +76,50 @@ const BarCharts: React.FC<IProps> = (props: IProps) => {
           borderWidth: 0.2,
           borderColor: Colors.DISABLED,
           marginLeft: scaleFactor(-30),
+        }}
+      /> */}
+
+      <StackedBarChart
+        data={{
+          labels: props.labels,
+          legend: ['External'],
+          data: [
+            [props.data[0]],
+            [props.data[1]],
+            [props.data[2]],
+          ],
+          barColors: ['#0DC5FA'],
+        }}
+        hideLegend={true}
+        width={props.width ?? 450}
+        height={250}
+        yAxisInterval={1}
+        decimalPlaces={0}
+        segments={5}
+        chartConfig={{
+          fillShadowGradient: props.color ?? '#0DC5FA',
+          fillShadowGradientOpacity: 1,
+          // labelColor: (opacity = 1) => Colors.GRAY,
+          backgroundColor: 'white',
+          backgroundGradientFrom: 'white',
+          backgroundGradientTo: 'white',
+          color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+          style: {
+            borderRadius: 16,
+          },
+          // propsForBackgroundLines: {
+          //   strokeDasharray: "4",
+          //   strokeWidth: 0, // If you put 0 in the value no line is displayed
+          //   stroke: `rgba(0, 0, 0, 0)`,
+          // },
+        }}
+        style={{
+          
+          marginVertical: 8,
+          borderRadius: 16,
+          marginRight: 10,
+          borderWidth: 0.2,
+          borderColor: Colors.DISABLED
         }}
       />
     </View>

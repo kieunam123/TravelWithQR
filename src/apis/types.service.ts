@@ -33,6 +33,7 @@ export interface ILocation {
   rate: number;
   image_links: string[];
   places: ILocationPlace[];
+  key?: string;
 }
 
 export interface IImgurResult {

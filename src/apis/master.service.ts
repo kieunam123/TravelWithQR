@@ -30,7 +30,7 @@ export const updateUser = async (
 ): Promise<IApiResponse> => {
   return putWithUrl<IApiResponse>(
     API_URL,
-    `/api/update`,
+    `/api/updateUser`,
     dataUpdate,
     { id: id },
   )

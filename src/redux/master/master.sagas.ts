@@ -1,11 +1,11 @@
-import { all, call, fork, put, takeEvery } from "redux-saga/effects";
+import { all, call, fork, put, select, takeEvery } from "redux-saga/effects";
 import { ICreateLocation, ICreateUser, IDeleteUser, IDelteLocation, IGetLocation, IGetUser, IUpdateLocation, IUpdateUser, Types } from "./master.types";
 import { CreateUserData, createLocation, deleteLocation, deleteUser, getLocation, getUser, updateLocation, updateUser } from "~/apis/master.service";
 import { IApiResponse, ILocation, ILocationPlace, IUser } from "~/apis/types.service";
 import GlobalActions from "../global/global.actions";
 import MasterActions from "./master.actions";
-import { onSagaNavigate, safe } from "../saga.helpers";
-import { INavigateScreen } from "~/commons/types";
+import { getUserParams, onSagaNavigate, safe } from "../saga.helpers";
+import { INavigateScreen, IUserParams } from "~/commons/types";
 import ScreenType from "~/navigations/screen.constant";
 
 //#region ================== WORKER ====================
@@ -53,12 +53,14 @@ function* handleGetData({ payload }: IGetUser) {
 
 function* handleUpdateData({ payload }: IUpdateUser) {
   const { id, dataUpdate } = payload;
+  const userParasm: IUserParams = yield select(getUserParams);
   const response: IApiResponse = yield call(
     updateUser,
     id,
     dataUpdate,
   );
   if (response.status === 'Success') {
+    yield put(GlobalActions.updateUserParams({...userParasm,...dataUpdate}));
     yield put(GlobalActions.openErrorInfoModal(`Cập nhật dữ liệu thành công`));
   } else {
     if (response.msg) {

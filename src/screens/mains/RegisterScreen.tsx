@@ -99,11 +99,13 @@ const RegisterScreen = () => {
                 mobile: phone,
                 username: username,
                 password: password,
-                imgurl: imgurl ?? ''
+                imgurl: imgurl ?? '',
+                usertype: 'user'
               }))
             }
-          }
-        ])
+          },
+          {text: 'Huỷ bỏ', onPress:()=>{}}
+        ], {cancelable: true})
       }
     } else {
       alert('Vui lòng không bỏ trống thông tin!')
@@ -113,7 +115,7 @@ const RegisterScreen = () => {
   return (
     <>
       <Loading2 text='Vui lòng đợi giây lát...' isVisible={onImageUpload} />
-      <Header title={'Đăng ký tài khoản'} isMenu={false} disableThreeDot />
+      {/* <Header title={'Đăng ký tài khoản'} isMenu={false} disableThreeDot /> */}
       <View style={styles.container}>
         {/* Background Image or any travel-themed design */}
         {/* Replace 'BackgroundComponent' with your background design component */}
@@ -226,7 +228,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: 120,
     height: 120,
-    borderRadius: 50,
+    borderRadius: 60,
     // marginRight: 16,
   },
 });

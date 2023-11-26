@@ -38,7 +38,7 @@ const BarCharts: React.FC<IProps> = (props: IProps) => {
         segments={Math.max(...props.data)}
 
         chartConfig={{
-          barPercentage: 0.7,
+          barPercentage: 1,
           decimalPlaces: 0,
           labelColor: (opacity = 1) => Colors.GRAY,
           backgroundColor: 'white',

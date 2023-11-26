@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View, Alert, Image } from 'react-native'
+import { StyleSheet, Text, View, Alert, Image, Dimensions } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Header, SearchBox2 } from '~/components/sections'
+import { Container, Header, SearchBox2 } from '~/components/sections'
 import { FlatListCommon, PrintButton, SafeView } from '~/components/commons'
 import { CreateLocation, LocationItemAdmin } from '~/containers/master'
 import { useIsFocused, useNavigation } from '@react-navigation/native'
@@ -13,6 +13,7 @@ import * as ImagePicker from 'expo-image-picker';
 import icons from '~/assets/icons'
 import { goToScreen, scaleFactor } from '~/helpers/UtilitiesHelper'
 import { ILocation } from '~/apis/types.service'
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const QRScanScreen = () => {
 	const { locations, places } = useSelector((state: RootState) => state.master);
@@ -95,7 +96,7 @@ const QRScanScreen = () => {
 	}
 
 	return (
-		<SafeView>
+		<>
 			{isScanQR && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
 				<View style={{ flex: .1 }} />
 				<Image
@@ -110,17 +111,19 @@ const QRScanScreen = () => {
 			</View>}
 			{!isScanQR && <View style={styles.container}>
 				{userParams.usertype === 'admin' && <>
-					<View style={{ flexDirection: 'row', height: scaleFactor(100) }}>
-						<View style={{ flex: 1 }}>
-							<PrintButton style={{}} onPress={() => { }} iconName='magnifying-glass' iconType='Entypo' />
+
+					<View style={{ flexDirection: 'row', justifyContent: 'center', height: 85, width:SCREEN_WIDTH}}>
+						<View style={{ flex:1, justifyContent:'center', alignItems:'center'  }}>
+							<PrintButton style={{right:0, left:0, position:'relative', bottom:0}} onPress={() => { }} iconName='magnifying-glass' iconType='Entypo' />
 						</View>
-						<View style={{ flex: 1 }}>
-							<PrintButton style={{}} onPress={() => goToScreen(ScreenType.Detail.AddLocation, { type: 'add' })} iconName='plus' iconType='AntDesign' />
+						<View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+							<PrintButton style={{right:0, left:0, position:'relative', bottom:0}} onPress={() => goToScreen(ScreenType.Detail.AddLocation, { type: 'add' })} iconName='plus' iconType='AntDesign' />
 						</View>
-						<View style={{ flex: 1 }}>
-							<PrintButton style={{}} onPress={() => { }} iconName='export' iconType='Entypo' />
+						<View style={{ flex:1, justifyContent:'center', alignItems:'center'}}>
+							<PrintButton style={{right:0, left:0, position:'relative', bottom:0}} onPress={() => { }} iconName='export' iconType='Entypo' />
 						</View>
 					</View>
+
 					{/* <View style={{ padding: 10, marginTop: -20 }}>
 						<SearchBox2
 							placeholder={'Tìm kiếm địa điểm'}
@@ -129,29 +132,31 @@ const QRScanScreen = () => {
 							stringtext={() => { }}
 						/>
 					</View> */}
+					<View style={{flex:1}}>
+						<FlatListCommon
+							onRefresh={() => { }}
+							isShowVertical={true}
+							data={locationList}
+							renderItem={({ item }: { item: ILocation }) => (
+								<LocationItemAdmin
+									name={item.name}
+									img={item.image_links}
+									country={item.country}
+									category={item.category}
+									date_created={item.date_created}
+									date_updated={item.date_updated}
+									id={item.id ?? 0}
+									short_description={item.short_description ?? ''}
+									onPress={() => OnLocationPress(item)}
+								/>
+							)}
+						/>
+					</View>
 
-					<FlatListCommon
-						onRefresh={() => { }}
-						isShowVertical={true}
-						data={locationList}
-						renderItem={({ item }: { item: ILocation }) => (
-							<LocationItemAdmin
-								name={item.name}
-								img={item.image_links}
-								country={item.country}
-								category={item.category}
-								date_created={item.date_created}
-								date_updated={item.date_updated}
-								id={item.id ?? 0}
-								short_description={item.short_description ?? ''}
-								onPress={() => OnLocationPress(item)}
-							/>
-						)}
-					/>
 
 				</>}
 			</View>}
-		</SafeView>
+		</>
 	)
 }
 

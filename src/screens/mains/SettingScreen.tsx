@@ -1,5 +1,5 @@
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import { Header } from '~/components/sections'
 import { Icon, SafeView, TextCustom } from '~/components/commons'
 import { useSelector } from 'react-redux';
@@ -8,18 +8,20 @@ import { convertStringToNumber, goToScreen } from '~/helpers/UtilitiesHelper';
 import ScreenType from '~/navigations/screen.constant';
 import { IUser } from '~/apis/types.service';
 import { Colors } from '~/configs';
+import { IUserParams } from '~/commons/types';
 
 const SettingScreen = () => {
 	const { userParams } = useSelector((state: RootState) => state.global);
+	const [userinfo, setUserInfo] = useState<IUserParams>(userParams);
 	const user: IUser = {
-		name: userParams.name,
-		mobile: userParams.phone,
-		address: userParams.address,
-		id: convertStringToNumber(userParams.userId),
-		username: userParams.username,
-		password: userParams.password,
-		imgurl: userParams.imgurl !== '' ? userParams.imgurl : 'https://static.vecteezy.com/system/resources/previews/005/337/799/non_2x/icon-image-not-found-free-vector.jpg',
-		usertype: userParams.usertype
+		name: userinfo.name,
+		mobile: userinfo.phone,
+		address: userinfo.address,
+		id: convertStringToNumber(userinfo.userId),
+		username: userinfo.username,
+		password: userinfo.password,
+		imgurl: userinfo.imgurl !== '' ? userinfo.imgurl : 'https://static.vecteezy.com/system/resources/previews/005/337/799/non_2x/icon-image-not-found-free-vector.jpg',
+		usertype: userinfo.usertype
 	}
 	const handleUpdateInfo = () => {
 		console.log('Navigate to Update Information screen');
@@ -42,6 +44,10 @@ const SettingScreen = () => {
 	const handleChangAvatar = () => {
 
 	}
+	
+	useEffect(() => {
+		setUserInfo(userParams);
+	},[userParams])
 
 	return (
 		<ScrollView contentContainerStyle={styles.container}>
@@ -61,8 +67,8 @@ const SettingScreen = () => {
 			</View>
 			{/* User Information */}
 			<View style={styles.userInfo}>
-				<Text style={styles.userName}>{userParams.name}</Text>
-				<Text style={styles.userId}>User ID: {userParams.userId}</Text>
+				<Text style={styles.userName}>{userinfo.name}</Text>
+				<Text style={styles.userId}>User ID: {userinfo.userId}</Text>
 			</View>
 			{/* Settings Options */}
 			<View style={styles.settings}>
@@ -115,7 +121,7 @@ const styles = StyleSheet.create({
 	avatar: {
 		width: 120,
 		height: 120,
-		borderRadius: 40,
+		borderRadius: 60,
 		// marginRight: 16,
 	},
 	changeAvatar: {

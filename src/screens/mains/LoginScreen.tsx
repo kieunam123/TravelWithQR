@@ -89,7 +89,7 @@ const LoginScreen = ({ route }) => {
 
   return (
     <>
-      <Header title='Đăng nhập' isMenu={false} disableThreeDot />
+      {/* <Header title='Đăng nhập' isMenu={false} disableThreeDot /> */}
       <View style={styles.container}>
         <ImageBackground
           source={imgs.background_img1}

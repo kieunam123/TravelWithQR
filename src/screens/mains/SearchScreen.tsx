@@ -138,7 +138,7 @@ const SearchScreen = () => {
 	}
 
 	return (
-		<SafeView>
+		<>
 			<View style={{ flex: 1 }}>
 				{userParams.usertype === 'admin' && <>
 					<View style={{ padding: 10, marginTop: -20 }}>
@@ -304,7 +304,7 @@ const SearchScreen = () => {
 				</>}
 			</View>
 
-		</SafeView>
+		</>
 	)
 }
 

@@ -1,5 +1,5 @@
 import { Alert, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View, Image, Dimensions } from 'react-native'
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Container, Header } from '~/components/sections'
 import { BarCharts, FlatListCommon, Icon, PieCharts, SafeView, TextCustom } from '~/components/commons'
 import { useDispatch, useSelector } from 'react-redux'
@@ -14,6 +14,7 @@ import { callApiGetWithToken, scaleFactor } from '~/helpers/UtilitiesHelper'
 import { API_URL } from '~/configs/strings'
 import { LocationItem } from '~/containers/master'
 import { Colors, fonts } from '~/configs'
+import { IUserParams } from '~/commons/types'
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const DashboardScreen = () => {
@@ -28,6 +29,7 @@ const DashboardScreen = () => {
 	const dispatch = useDispatch();
 	const { locations, places, User } = useSelector((state: RootState) => state.master);
 	const { userParams } = useSelector((state: RootState) => state.global);
+	const [userInfo, setUserInfo] = useState<IUserParams>(userParams);
 	const handleGetLocation = useCallback(() => {
 		dispatch(MasterActions.getLocation())
 	}, [dispatch]);
@@ -38,21 +40,10 @@ const DashboardScreen = () => {
 		}
 	}, [handleGetLocation, isFocused])
 
+	useEffect(() => {
+		setUserInfo(userParams)
+	},[userParams])
 
-	async function UserOnPress(item: IUser) {
-		Alert.alert('Select Action', '', [
-			{
-				text: 'Update', onPress: () => {
-					goToScreen(ScreenType.Tab.ScanQR);
-					dispatch(MasterActions.getUserSuccess([{ ...item, isUpdate: true }]));
-				}
-			},
-			{
-				text: 'Delete', onPress: () => dispatch(MasterActions.deleteUser(`${item.id}`))
-			},
-			{ text: 'Close', style: 'cancel' }
-		])
-	}
 
 	async function LocationOnPress(location: ILocation) {
 		goToScreen(ScreenType.Detail.LocationDetail, { Location: location })
@@ -75,19 +66,19 @@ const DashboardScreen = () => {
 				<View style={{ paddingBottom: scaleFactor(30), flexDirection: 'row', alignItems: 'center', justifyContent: "space-between", padding: 10 }}>
 					<View>
 						<Text style={{fontSize:15}}>Xin chào, </Text>
-						<TextCustom bold style={styles.title}>{userParams.name}</TextCustom>
+						<TextCustom bold style={styles.title}>{userInfo.name}</TextCustom>
 					</View>
-					<View style={{ paddingHorizontal: scaleFactor(20) }}>
-						{userParams.imgurl === '' && <Icon
+					<View style={{ paddingHorizontal: scaleFactor(30) }}>
+						{userInfo.imgurl === '' && <Icon
 							type="FontAwesome"
 							name="user-circle-o"
 							color={Colors.GRAY}
 							size={scaleFactor(75)}
 						/>}
-						{userParams.imgurl !== '' && <Image source={{ uri: userParams.imgurl }} resizeMode='contain' style={{ width: 100, height: 100 }} />}
+						{userInfo.imgurl !== '' && <Image source={{ uri: userInfo.imgurl }} resizeMode='contain' style={{ width: 100, height: 100, borderRadius: 50 }} />}
 					</View>
 				</View>
-				{userParams.usertype !== 'admin' && <>
+				{userInfo.usertype !== 'admin' && <>
 					<View>
 						<Text style={styles.title2}>Dành cho bạn</Text>
 
@@ -135,7 +126,7 @@ const DashboardScreen = () => {
 						/>
 					</View>
 				</>}
-				{userParams.usertype === 'admin' && <>
+				{userInfo.usertype === 'admin' && <>
 					<View>
 						<Text style={styles.title2}>Tổng quan</Text>
 						<View style={styles.statistic}>

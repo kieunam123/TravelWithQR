@@ -1,7 +1,7 @@
 import { Alert, Dimensions, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
-import { Button, FlatListCommon, Icon, Input, SafeView, TextCustom } from '~/components/commons';
-import { Column, Header, Row } from '~/components/sections';
+import React, { useRef, useState } from 'react'
+import { Button, FlatListCommon, Icon, Input, ModalCommon, PrintButton, SafeView, TextCustom } from '~/components/commons';
+import { Column, Container, Header, Row } from '~/components/sections';
 import { Colors, Sizes, fonts } from '~/configs';
 import { chunkArray, convertStringToNumber, scaleFactor } from '~/helpers/UtilitiesHelper';
 import icons from '~/assets/icons';
@@ -14,9 +14,15 @@ import MasterActions from '~/redux/master/master.actions';
 import { getCurrentDateToStringDDMMYYY } from '~/helpers/DatetimeHelpers';
 import { LocationValidates } from '~/validates/LocationValidates';
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+import QRCode from "react-native-qrcode-svg";
+import { Svg } from 'react-native-svg';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 const AddLocationScreen = ({ route }) => {
   const dispatch = useDispatch();
+  let svg = useRef<Svg>(null);
+  const [showQRCode, setShowQRCode] = useState<boolean>(false);
   const { Location, type } = route.params ?? '';
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isAddPlaces, setIsAddPlaces] = useState<boolean>(false);
@@ -78,6 +84,21 @@ const AddLocationScreen = ({ route }) => {
     image_links: Location?.image_links ?? [],
     places: Location?.places ?? [],
   };
+
+  const getDataURL = () => {
+    // @ts-ignore
+    svg.current?.toDataURL(callback);
+  };
+
+  async function callback(dataURL: string) {
+    const filename = FileSystem.documentDirectory + (`${Location.id}.jpeg`);
+    FileSystem.writeAsStringAsync(filename, dataURL, {
+      encoding: FileSystem.EncodingType.Base64
+    }).then(() => {
+      Sharing.shareAsync(filename);
+    });
+    // console.log(dataURL);
+  }
 
   return (
     <Formik
@@ -222,22 +243,25 @@ const AddLocationScreen = ({ route }) => {
                   </View>}
                 </View>
               </ScrollView>
-              {/* <View style={{ backgroundColor: Colors.SUCCESS, borderColor: Colors.BORDER_TWO, borderWidth: 1, alignItems: 'center' }}>
-                <Row>
-                  <Column>
-                    <Pressable onPress={() => handleSubmit()} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, flexDirection: 'row' }}>
-                      <TextCustom bold style={{ fontSize: Sizes.Title, marginTop: 5, color: 'white', paddingRight: 10 }}>
-                        {type === 'add' ? 'TẠO' : 'CẬP NHẬT'}
-                      </TextCustom>
-                      <Icon
-                        name="check-circle"
-                        type="Feather"
-                        style={{ color: Colors.WHITE }}
+              <ModalCommon isVisible={showQRCode} title='Mã QR Địa Điểm' onClose={() => setShowQRCode(false)}>
+                <View style={{ height: SCREEN_HEIGHT * 0.4 }}>
+                  <Container bgColor='white' style={{ paddingHorizontal: 0 }}>
+                    <View style={{ flex: 1, paddingVertical: 10, justifyContent: 'center', alignItems: 'center' }}>
+                      <QRCode size={scaleFactor(180)} value={isAddPlaces ? (placesIndex !== undefined ? `${values.places[placesIndex].placeid}` : `0`) : `${Location.id}`} getRef={(c: any) => (svg.current = c)} />
+                    </View>
+                    <Row style={{}}>
+                      <Button
+                        title='Xuất Mã QR'
+                        radius={10}
+                        color='white'
+                        onPress={() => getDataURL()}
                       />
-                    </Pressable>
-                  </Column>
-                </Row>
-              </View> */}
+                    </Row>
+                  </Container>
+                </View>
+              </ModalCommon>
+              {type !== 'add' && <PrintButton style={{ bottom: scaleFactor(50) }} onPress={() => setShowQRCode(true)} iconName='qrcode-scan' iconType='MaterialCommunityIcons' />}
+
               <Row>
                 <Column style={{ justifyContent: 'center' }}>
                   <Button

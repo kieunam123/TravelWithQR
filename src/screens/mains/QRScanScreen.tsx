@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View, Alert, Image, Dimensions } from 'react-native'
+import { StyleSheet, Text, View, Alert, Image, Dimensions, Button } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Container, Header, SearchBox2 } from '~/components/sections'
-import { FlatListCommon, PrintButton, SafeView } from '~/components/commons'
+import { FlatListCommon, PrintButton, SafeView, TextCustom } from '~/components/commons'
 import { CreateLocation, LocationItemAdmin } from '~/containers/master'
 import { useIsFocused, useNavigation } from '@react-navigation/native'
 import ScreenType from '~/navigations/screen.constant'
@@ -110,6 +110,10 @@ const QRScanScreen = () => {
 				<View style={{ flex: 1 }} />
 			</View>}
 			{!isScanQR && <View style={styles.container}>
+				{userParams.usertype !== 'admin' && <View style={{alignItems:'center', justifyContent: 'center', flex: 1}}>
+						<TextCustom bold style={{alignSelf:'center', justifyContent:'center'}}>{'Khong phai ma QR duoc xuat tu ung dung!\n Vui long thu lai!'}</TextCustom>
+						<Button title='SCAN QR' onPress={()=>setIsScanQR(true)}></Button>
+					</View>}
 				{userParams.usertype === 'admin' && <>
 
 					<View style={{ flexDirection: 'row', justifyContent: 'center', height: 85, width:SCREEN_WIDTH}}>

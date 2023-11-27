@@ -247,7 +247,7 @@ const AddLocationScreen = ({ route }) => {
                 <View style={{ height: SCREEN_HEIGHT * 0.4 }}>
                   <Container bgColor='white' style={{ paddingHorizontal: 0 }}>
                     <View style={{ flex: 1, paddingVertical: 10, justifyContent: 'center', alignItems: 'center' }}>
-                      <QRCode size={scaleFactor(180)} value={isAddPlaces ? (placesIndex !== undefined ? `${values.places[placesIndex].placeid}` : `0`) : `${Location.id}`} getRef={(c: any) => (svg.current = c)} />
+                      <QRCode size={scaleFactor(180)} value={`${Location?.id ?? ''}`} getRef={(c: any) => (svg.current = c)} />
                     </View>
                     <Row style={{}}>
                       <Button
@@ -305,6 +305,7 @@ const AddLocationScreen = ({ route }) => {
                   setIsAddPlaces(false);
                   setPlacesIndex(undefined);
                 }} />
+                
               <ScrollView>
                 <View style={styles.headerContainer}>
                   <View style={styles.ImgContainer}>
@@ -398,6 +399,25 @@ const AddLocationScreen = ({ route }) => {
                   </View>
                 </View>
               </ScrollView>
+              <ModalCommon isVisible={showQRCode} title='Mã QR Địa Điểm' onClose={() => setShowQRCode(false)}>
+                <View style={{ height: SCREEN_HEIGHT * 0.4 }}>
+                  <Container bgColor='white' style={{ paddingHorizontal: 0 }}>
+                    <View style={{ flex: 1, paddingVertical: 10, justifyContent: 'center', alignItems: 'center' }}>
+                      <QRCode size={scaleFactor(180)} value={isAddPlaces ? (placesIndex !== undefined ? `${values.places[placesIndex].placeid}` : `0`) : `${values.id}`} getRef={(c: any) => (svg.current = c)} />
+                    </View>
+                    <Row style={{}}>
+                      <Button
+                        title='Xuất Mã QR'
+                        radius={10}
+                        color='white'
+                        onPress={() => getDataURL()}
+                      />
+                    </Row>
+                  </Container>
+                </View>
+              </ModalCommon>
+              {type !== 'add' && <PrintButton style={{ bottom: scaleFactor(50) }} onPress={() => setShowQRCode(true)} iconName='qrcode-scan' iconType='MaterialCommunityIcons' />}
+
             </SafeView>}
           </>
         )

@@ -56,6 +56,7 @@ const initialState: IGlobalState = {
     accepted: false,
     actionName: '',
   },
+  lang: 'vi'
 };
 
 export default function GlobalReducer(
@@ -147,6 +148,10 @@ export default function GlobalReducer(
       confirm.isOpen = false;
       confirm.title = '';
       return {...state, confirm};
+    }
+    case Types.GLOBAL_SET_LANG: {
+      const {lang} = action.payload;
+      return {...state, lang: lang}
     }
     default:
       return state;

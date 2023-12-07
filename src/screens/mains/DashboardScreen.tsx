@@ -11,7 +11,7 @@ import { ILocation, ILocationPlace, IUser } from '~/apis/types.service'
 import { navigate } from '~/navigations'
 import ScreenType from '~/navigations/screen.constant'
 import { callApiGetWithToken, scaleFactor } from '~/helpers/UtilitiesHelper'
-import { API_URL } from '~/configs/strings'
+import AppString, { API_URL } from '~/configs/strings'
 import { LocationItem } from '~/containers/master'
 import { Colors, fonts } from '~/configs'
 import { IUserParams } from '~/commons/types'
@@ -65,7 +65,7 @@ const DashboardScreen = () => {
 			<View style={styles.container}>
 				<View style={{ paddingBottom: scaleFactor(30), flexDirection: 'row', alignItems: 'center', justifyContent: "space-between", padding: 10 }}>
 					<View>
-						<Text style={{fontSize:15}}>Xin chào, </Text>
+						<Text style={{fontSize:15}}>{AppString.Dashboard.Welcome}</Text>
 						<TextCustom bold style={styles.title}>{userInfo.name}</TextCustom>
 					</View>
 					<View style={{ paddingHorizontal: scaleFactor(30) }}>
@@ -80,7 +80,7 @@ const DashboardScreen = () => {
 				</View>
 				{userInfo.usertype !== 'admin' && <>
 					<View>
-						<Text style={styles.title2}>Dành cho bạn</Text>
+						<Text style={styles.title2}>{AppString.Dashboard.Foryou}</Text>
 
 						<FlatListCommon
 							onRefresh={() => { }}
@@ -104,7 +104,7 @@ const DashboardScreen = () => {
 						/>
 					</View>
 					<View style={{ paddingVertical: scaleFactor(20) }}>
-						<Text style={styles.title2}>Khám phá các địa điểm</Text>
+						<Text style={styles.title2}>{AppString.Dashboard.Explore}</Text>
 						<FlatListCommon
 							onRefresh={() => { }}
 							isShowVertical={false}
@@ -128,10 +128,10 @@ const DashboardScreen = () => {
 				</>}
 				{userInfo.usertype === 'admin' && <>
 					<View>
-						<Text style={styles.title2}>Tổng quan</Text>
+						<Text style={styles.title2}>{AppString.Dashboard.Summary}</Text>
 						<View style={styles.statistic}>
 							<BarCharts
-								labels={["Địa điểm", "Điểm tham quan", "Người dùng"]}
+								labels={[AppString.Dashboard.BarChartLabel1, AppString.Dashboard.BarChartLabel2, AppString.Dashboard.BarChartLabel3]}
 								data={[locations.length, places.length, User.length]}
 								color='#0DC5FA'
 								width={SCREEN_WIDTH}
@@ -139,18 +139,18 @@ const DashboardScreen = () => {
 						</View>
 					</View>
 					<View style={{paddingTop:10}}>
-						<Text style={styles.title2}>Thống kê người dùng</Text>
+						<Text style={styles.title2}>{AppString.Dashboard.Userstatistic}</Text>
 						<PieCharts
 							data={[
 								{
-									name: 'Người dùng',
+									name: AppString.Dashboard.PieChartLabel1,
 									population: User.length - CalTotalAdmin(),
 									color: 'rgba(131, 167, 234, 1)',
 									legendFontColor: '#7F7F7F',
 									legendFontSize: 15,
 								},
 								{
-									name: 'Quản trị viên',
+									name: AppString.Dashboard.PieChartLabel2,
 									population: CalTotalAdmin(),
 									color: '#EB6767',
 									legendFontColor: '#7F7F7F',

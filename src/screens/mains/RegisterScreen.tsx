@@ -15,7 +15,7 @@ import MasterActions from '~/redux/master/master.actions';
 import { RootState } from '~/redux/reducers';
 import * as ImagePicker from 'expo-image-picker';
 import { callApiPostWithToken } from '~/helpers/UtilitiesHelper';
-import { IMGUR_ACCESSTOKEN, IMGUR_API } from '~/configs/strings';
+import AppString, { IMGUR_ACCESSTOKEN, IMGUR_API } from '~/configs/strings';
 import Loading2 from '~/containers/Loading2';
 
 const RegisterScreen = () => {
@@ -53,7 +53,7 @@ const RegisterScreen = () => {
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      alert('Vui lòng cấp quyền truy cập thư viện!!');
+      alert(AppString.Register.AccessLibraryFailed);
       return;
     }
     setOnImageUpload(true);
@@ -73,7 +73,7 @@ const RegisterScreen = () => {
         setImgUrl(response.data.link)
 
       } else {
-        alert(`Không thể tải ảnh lên host. status ${response.status}`);
+        alert(`${AppString.Register.UploadFailed} ${response.status}`);
       }
     }
     setOnImageUpload(false);
@@ -88,11 +88,11 @@ const RegisterScreen = () => {
         }
       })
       if (isFound) {
-        alert('Username này đã tồn tại')
+        alert(AppString.Register.UserExists)
       } else {
-        Alert.alert(`Thông tin đăng ký`, `Họ tên: ${name}\nSĐT: ${phone}\nĐịa chỉ: ${address}\nUsername: ${username}`, [
+        Alert.alert(AppString.Register.RegisterInfo, `${AppString.Register.Fullname}: ${name}\n${AppString.Register.Phone}: ${phone}\n${AppString.Register.Address}: ${address}\nUsername: ${username}`, [
           {
-            text: 'Đăng ký', onPress: () => {
+            text: AppString.Login.Register, onPress: () => {
               dispatch(MasterActions.CreateUser({
                 name: name,
                 address: address,
@@ -104,17 +104,17 @@ const RegisterScreen = () => {
               }))
             }
           },
-          {text: 'Huỷ bỏ', onPress:()=>{}}
+          {text: AppString.Common.ConfirmCancel, onPress:()=>{}}
         ], {cancelable: true})
       }
     } else {
-      alert('Vui lòng không bỏ trống thông tin!')
+      alert(AppString.Register.FillAlert)
     }
   }
 
   return (
     <>
-      <Loading2 text='Vui lòng đợi giây lát...' isVisible={onImageUpload} />
+      <Loading2 text={AppString.Common.LoadingAlert} isVisible={onImageUpload} />
       {/* <Header title={'Đăng ký tài khoản'} isMenu={false} disableThreeDot /> */}
       <View style={styles.container}>
         {/* Background Image or any travel-themed design */}
@@ -132,8 +132,8 @@ const RegisterScreen = () => {
           </TouchableOpacity>
           <View style={styles.formContainer}>
             <TextInput
-              label={InputLabel('Name')}
-              placeholder="Enter your Name"
+              label={InputLabel(AppString.Register.Fullname)}
+              placeholder={AppString.Register.FullnameInput}
               value={name}
               onChangeText={(text) => setName(text)}
               style={styles.input}
@@ -142,8 +142,8 @@ const RegisterScreen = () => {
               theme={{ dark: true }}
             />
             <TextInput
-              label={InputLabel('Phone number')}
-              placeholder="Enter your Mobile phone"
+              label={InputLabel(AppString.Register.Phone)}
+              placeholder={AppString.Register.PhoneInput}
               value={phone}
               onChangeText={(text) => setPhone(text)}
               style={styles.input}
@@ -152,8 +152,8 @@ const RegisterScreen = () => {
               theme={{ dark: true }}
             />
             <TextInput
-              label={InputLabel('Address')}
-              placeholder="Enter your Address"
+              label={InputLabel(AppString.Register.Address)}
+              placeholder={AppString.Register.AddressInput}
               value={address}
               onChangeText={(text) => setAddress(text)}
               style={styles.input}
@@ -163,7 +163,7 @@ const RegisterScreen = () => {
             />
             <TextInput
               label={InputLabel('Username')}
-              placeholder="Enter your username"
+              placeholder={AppString.Login.Username}
               value={username}
               onChangeText={(text) => setUsername(text)}
               style={styles.input}
@@ -173,7 +173,7 @@ const RegisterScreen = () => {
             />
             <TextInput
               label={InputLabel('Password')}
-              placeholder="Enter your password"
+              placeholder={AppString.Login.Password}
               value={password}
               onChangeText={(text) => setPassword(text)}
               secureTextEntry={!passwordVisible}
@@ -193,7 +193,7 @@ const RegisterScreen = () => {
             <Button mode="contained" style={{ backgroundColor: '#7a62fe', paddingVertical: scaleFactor(5) }} onPress={async () => {
               await checkUserExist(username)
             }}>
-              Register Account
+              {AppString.Register.RegisterButton}
             </Button>
           </View>
         </ImageBackground>

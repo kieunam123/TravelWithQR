@@ -31,6 +31,7 @@ export interface IGlobalState {
     actionName: string;
     payload?: object;
   };
+  lang: string;
 }
 
 export enum Types {
@@ -53,6 +54,8 @@ export enum Types {
 
   GLOBAL_SET_CONFIRM_MODAL = 'GLOBAL_SET_CONFIRM_MODAL',
   GLOBAL_CONFIRM_MODAL_ACCEPT_DENY = 'GLOBAL_CONFIRM_MODAL_ACCEPT_DENY',
+
+  GLOBAL_SET_LANG = 'GLOBAL_SET_LANG',
 }
 
 export interface ISetGlobalParameter {
@@ -131,7 +134,13 @@ export interface IAcceptDenyConfirmModal {
   payload: {accepted: boolean};
 }
 
+export interface ISetLang {
+  type: Types.GLOBAL_SET_LANG;
+  payload: {lang: string}
+}
+
 export type GlobalActionType =
+  | ISetLang
   | ISetGlobalParameter
   | IOpenLoadingModalGlobal
   | ICloseLoadingModalGlobal

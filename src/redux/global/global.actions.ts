@@ -13,6 +13,7 @@ import {
   ISetConfirmData,
   ISetCurrentDrawerScreen,
   ISetDataForPdfViewerScreen,
+  ISetLang,
   IUpdateUserParams,
   Types,
 } from './global.types';
@@ -81,6 +82,10 @@ const GlobalActions = {
   acceptDenyConfirm: (accepted: boolean): IAcceptDenyConfirmModal => ({
     type: Types.GLOBAL_CONFIRM_MODAL_ACCEPT_DENY,
     payload: {accepted},
+  }),
+  setLang:(lang: string): ISetLang => ({
+    type: Types.GLOBAL_SET_LANG,
+    payload: {lang}
   }),
 };
 

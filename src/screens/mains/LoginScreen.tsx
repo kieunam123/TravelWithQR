@@ -8,6 +8,7 @@ import { IUser } from '~/apis/types.service';
 import imgs from '~/assets/imgs';
 import { Icon, TextCustom } from '~/components/commons';
 import { Header } from '~/components/sections';
+import { AppString } from '~/configs';
 import Color from '~/configs/colors';
 import { goToScreen, scaleFactor } from '~/helpers/UtilitiesHelper';
 import ScreenType from '~/navigations/screen.constant';
@@ -83,7 +84,7 @@ const LoginScreen = ({ route }) => {
     if (isFound) {
       goToScreen(ScreenType.Main.Tab)
     } else {
-      alert('Tên đăng nhập hoặc mật khẩu bị sai')
+      alert(AppString.Login.LoginAlert1)
     }
   }
 
@@ -98,7 +99,7 @@ const LoginScreen = ({ route }) => {
           <View style={styles.formContainer}>
             <TextInput
               label={InputLabel('Username')}
-              placeholder="Enter your username"
+              placeholder={AppString.Login.Username}
               value={username}
               onChangeText={(text) => setUsername(text)}
               style={styles.input}
@@ -108,7 +109,7 @@ const LoginScreen = ({ route }) => {
             />
             <TextInput
               label={InputLabel('Password')}
-              placeholder="Enter your password"
+              placeholder={AppString.Login.Password}
               value={password}
               onChangeText={(text) => setPassword(text)}
               secureTextEntry={!passwordVisible}
@@ -130,11 +131,11 @@ const LoginScreen = ({ route }) => {
               Sign In
             </Button>
             <View style={{ paddingTop: scaleFactor(15), flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-              <Text style={{ color: 'white', fontSize: 16 }}>Chưa có tài khoản? Vui lòng </Text>
+              <Text style={{ color: 'white', fontSize: 16 }}>{AppString.Login.NoAccount}</Text>
               <Pressable onPress={() => {
                 goToScreen(ScreenType.Main.Register)
               }}>
-                <TextCustom bold style={{ color: '#7a62fe', fontSize: 20 }}>Đăng ký</TextCustom>
+                <TextCustom bold style={{ color: '#7a62fe', fontSize: 20 }}>{AppString.Login.Register}</TextCustom>
               </Pressable>
             </View>
           </View>

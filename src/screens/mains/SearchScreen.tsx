@@ -23,13 +23,13 @@ export interface IMonitoringFilterModel {
 }
 
 const SearchScreen = () => {
-	const { userParams } = useSelector((state: RootState) => state.global);
+	const { userParams, lang } = useSelector((state: RootState) => state.global);
 	const { User, locations, places } = useSelector((state: RootState) => state.master);
 	const isFocused = useIsFocused();
 	const dispatch = useDispatch();
 	const [userlist, setUserList] = useState<IUser[]>([]);
 	const [isFilter, setIsFilter] = useState<boolean>(true);
-
+	let vi:boolean = lang === 'vi'
 	const handleGetUser = useCallback(() => {
 		dispatch(MasterActions.getUser());
 	}, [dispatch])
@@ -71,12 +71,12 @@ const SearchScreen = () => {
 	}
 
 	const starsMenu: ISearchCommon[] = [
-		{ label: 'Tất cả', value: 0, keySearch: '0' },
-		{ label: '5 sao', value: 5, keySearch: '5' },
-		{ label: '4 sao', value: 4, keySearch: '4' },
-		{ label: '3 sao', value: 3, keySearch: '3' },
-		{ label: '2 sao', value: 2, keySearch: '2' },
-		{ label: '1 sao', value: 1, keySearch: '1' },
+		{ label: vi ? 'Tất cả' : 'All', value: 0, keySearch: '0' },
+		{ label: vi ? '5 sao' : '5 stars', value: 5, keySearch: '5' },
+		{ label: vi ? '4 sao' : '4 stars', value: 4, keySearch: '4' },
+		{ label: vi ? '3 sao' : '3 stars', value: 3, keySearch: '3' },
+		{ label: vi ? '2 sao' : '2 stars', value: 2, keySearch: '2' },
+		{ label: vi ? '1 sao' : '1 stars', value: 1, keySearch: '1' },
 	]
 
 	useEffect(() => {
@@ -99,7 +99,7 @@ const SearchScreen = () => {
 		let categoryMenu: ISearchCommon[] = [];
 		let num: number = 0
 		categoryMenu.push({
-			label: 'Tất cả',
+			label: vi ? 'Tất cả' : 'All',
 			value: 'all',
 			keySearch: 'all tat ca'
 		})
@@ -124,7 +124,7 @@ const SearchScreen = () => {
 		let countryMenu: ISearchCommon[] = [];
 		let num: number = 0
 		countryMenu.push({
-			label: 'Tất cả',
+			label: vi ? 'Tất cả' : 'All',
 			value: 'all',
 			keySearch: 'all tat ca'
 		})
@@ -167,7 +167,7 @@ const SearchScreen = () => {
 				{userParams.usertype === 'admin' && <>
 					<View style={{ padding: 10, marginTop: -20 }}>
 						<SearchBox2
-							placeholder={'Tìm kiếm người dùng'}
+							placeholder={vi ? 'Tìm kiếm người dùng' : 'Search user'}
 							dataSource={[]}
 							accessor={'key'}
 							stringtext={() => { }}
@@ -185,22 +185,23 @@ const SearchScreen = () => {
 								address={item.address}
 								username={item.username}
 								imgurl={item.imgurl}
+								vi={vi}
 								usertype={item.usertype ?? 'user'}
 								onPress={() => {
-									Alert.alert(`USERID ${item.id}`, 'Lựa chọn hành động', [
+									Alert.alert(`USERID ${item.id}`, vi ? 'Lựa chọn hành động' : 'Select option', [
 										{
-											text: 'Cập nhật', onPress: () => {
+											text: vi ? 'Cập nhật' : 'Edit', onPress: () => {
 												goToScreen(ScreenType.Detail.UpdateUser, { user: item })
 											}
 										},
 										{
-											text: 'Xoá', onPress: () => {
+											text: vi ? 'Xoá' : 'Delete', onPress: () => {
 												dispatch(MasterActions.deleteUser(`${item.id}`))
 												const updatedArray = userlist.filter(obj => obj.id !== item.id);
 												setUserList([...updatedArray])
 											}
 										},
-										{ text: 'Huỷ bỏ', onPress: () => { } }
+										{ text: vi ? 'Huỷ bỏ' : 'Cancel', onPress: () => { } }
 									])
 								}}
 							/>
@@ -211,7 +212,7 @@ const SearchScreen = () => {
 				{userParams.usertype !== 'admin' && <>
 					<View style={{ padding: 10, marginTop: -20 }}>
 						<SearchBox2
-							placeholder={'Tìm kiếm địa điểm'}
+							placeholder={vi ? 'Tìm kiếm địa điểm' : 'Search location'}
 							dataSource={locationsPlaces}
 							accessor={'key'}
 							stringtext={handleSearch}
@@ -239,7 +240,7 @@ const SearchScreen = () => {
 										<Row>
 											<Column>
 												<DateRow
-													label={'Từ ngày'}
+													label={vi ? 'Từ ngày' : 'From date'}
 													date={convertStringToDate(values.fromdate)}
 													name="fromdate"
 													type="date"
@@ -247,7 +248,7 @@ const SearchScreen = () => {
 											</Column>
 											<Column>
 												<DateRow
-													label={'Đến ngày'}
+													label={vi ? 'Đến ngày' : 'To date'}
 													date={convertStringToDate(values.todate)}
 													name="todate"
 													type="date"
@@ -257,7 +258,7 @@ const SearchScreen = () => {
 										<Row>
 											<Column>
 												<Dropdown
-													label={'Lọc theo loại địa điểm'}
+													label={vi ? 'Lọc theo loại địa điểm' : 'Filter by location'}
 													name="category"
 													data={categorylist()}
 													selectedValue={values.category}
@@ -268,7 +269,7 @@ const SearchScreen = () => {
 										<Row>
 											<Column>
 												<Dropdown
-													label={'Lọc theo đánh giá'}
+													label={!vi ? 'Filter by rating' : 'Lọc theo đánh giá'}
 													name="stars"
 													data={starsMenu}
 													selectedValue={values.stars}
@@ -279,7 +280,7 @@ const SearchScreen = () => {
 										<Row>
 											<Column>
 												<Dropdown
-													label={'Lọc theo quốc gia'}
+													label={!vi ? 'Filter by country' : 'Lọc theo quốc gia'}
 													name="country"
 													data={countryList()}
 													selectedValue={values.country}
@@ -292,7 +293,7 @@ const SearchScreen = () => {
 											<Column style={{ justifyContent: 'center', alignItems: 'center' }}>
 												<Button
 													iconLeft={{ type: 'AntDesign', name: 'filter' }}
-													title={'Tìm kiếm'}
+													title={!vi ? 'Search' : 'Tìm kiếm'}
 													color={Colors.WHITE}
 													radius={20}
 													onPress={handleSubmit}

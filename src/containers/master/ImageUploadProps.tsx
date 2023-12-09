@@ -8,6 +8,8 @@ import * as ImagePicker from 'expo-image-picker';
 import { callApiPostWithToken } from '~/helpers/UtilitiesHelper';
 import { IMGUR_ACCESSTOKEN, IMGUR_API } from '~/configs/strings';
 import { IImgurResult } from '~/apis/types.service';
+import { useSelector } from 'react-redux';
+import { RootState } from '~/redux/reducers';
 
 interface ImageUploadProps {
   images: string[];
@@ -17,6 +19,8 @@ interface ImageUploadProps {
 }
 
 const ImageUpload: React.FC<ImageUploadProps> = ({ images, onImageUpload, onImageUploadComplete, onDeleteImage }) => {
+  const {lang} = useSelector((state: RootState) => state.global);
+  let vi:boolean = lang === 'vi'
   let imagelist: string[] = images
   function chunkArray<T>(array: T[], size: number): T[][] {
     return Array.from({ length: Math.ceil(array.length / size) }, (_, index) =>
@@ -29,7 +33,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ images, onImageUpload, onImag
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      alert('Vui lòng cấp quyền truy cập thư viện!!');
+      alert(vi ? 'Vui lòng cấp quyền truy cập thư viện!!' : 'Please allow app to access library!');
       return;
     }
     onImageUpload(true);
@@ -49,7 +53,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ images, onImageUpload, onImag
         imagelist.push(response.data.link)
         onImageUploadComplete(imagelist)
       } else {
-        alert(`Không thể tải ảnh lên host. status ${response.status}`);
+        alert(vi ? `Không thể tải ảnh lên host. status ${response.status}` : `Upload image to host failed. Status: ${response.status}`);
       }
     }
     onImageUpload(false);
@@ -65,9 +69,9 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ images, onImageUpload, onImag
                 {item.map((imgUrl, columnIndex) => (
                   <View key={columnIndex} style={styles.Images}>
                     <TouchableOpacity onLongPress={() => {
-                      Alert.alert('Xác nhận thao tác', 'Bạn muốn xoá hình ảnh này?', [
-                        { text: 'Xoá', onPress: () => onDeleteImage(columnIndex) },
-                        { text: 'Huỷ bỏ', onPress: () => { } }
+                      Alert.alert(vi ? 'Xác nhận thao tác' : 'Confirm action', vi ? 'Bạn muốn xoá hình ảnh này?' : 'Are you sure you want to delete this image', [
+                        { text: vi ? 'Xoá' : 'Delete', onPress: () => onDeleteImage(columnIndex) },
+                        { text: vi ? 'Huỷ bỏ' : 'Cancel', onPress: () => { } }
                       ])
                     }}>
                       <Image

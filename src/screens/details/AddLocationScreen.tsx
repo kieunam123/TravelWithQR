@@ -9,7 +9,7 @@ import { Formik } from 'formik';
 import { ILocation, ILocationPlace } from '~/apis/types.service';
 import { ImageUpload, LocationItem } from '~/containers/master';
 import Loading2 from '~/containers/Loading2';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import MasterActions from '~/redux/master/master.actions';
 import { getCurrentDateToStringDDMMYYY } from '~/helpers/DatetimeHelpers';
 import { LocationValidates } from '~/validates/LocationValidates';
@@ -18,10 +18,13 @@ import QRCode from "react-native-qrcode-svg";
 import { Svg } from 'react-native-svg';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
+import { RootState } from '~/redux/reducers';
+import { LocationValidatesEn } from '~/validates/LocationValidatesEn';
 
 const AddLocationScreen = ({ route }) => {
   const dispatch = useDispatch();
   let svg = useRef<Svg>(null);
+  const { lang } = useSelector((state: RootState) => state.global);
   const [showQRCode, setShowQRCode] = useState<boolean>(false);
   const { Location, type } = route.params ?? '';
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -42,7 +45,7 @@ const AddLocationScreen = ({ route }) => {
   const Rows = (imageUrlArray: ILocationPlace[]): ILocationPlace[][] => {
     return chunkArray(imageUrlArray, 2)
   }
-
+  let vi:boolean = lang === 'vi'
   const starcomponent = (rating: number): JSX.Element => {
     const stars: JSX.Element[] = [];
     const fullStars = Math.floor(rating);
@@ -103,7 +106,7 @@ const AddLocationScreen = ({ route }) => {
   return (
     <Formik
       initialValues={locationObj}
-      validationSchema={LocationValidates}
+      validationSchema={vi ? LocationValidates : LocationValidatesEn}
       onSubmit={(values) => {
         const objAdd = { ...values, id: Date.now() }
         if (type === 'add') {
@@ -125,8 +128,8 @@ const AddLocationScreen = ({ route }) => {
         return (
           <>
             {!isAddPlaces && <SafeView>
-              <Loading2 text='Vui lòng đợi giây lát...' isVisible={isLoading} />
-              <Header title={type === 'add' ? 'Thêm địa điểm' : `${values.name}`} disableThreeDot isMenu={false} />
+              <Loading2 text={ vi ? 'Vui lòng đợi giây lát...' : 'Loading, please wait...'} isVisible={isLoading} />
+              <Header title={type === 'add' ? vi ? 'Thêm địa điểm' : 'Add Location' : `${values.name}`} disableThreeDot isMenu={false} />
               <ScrollView>
                 <View style={styles.headerContainer}>
                   <View style={styles.ImgContainer}>
@@ -156,14 +159,14 @@ const AddLocationScreen = ({ route }) => {
                         isNoLabel
                         value={values.name}
                         name='name'
-                        label='Nhập tên địa điểm'
+                        label={vi ? 'Nhập tên địa điểm' : 'Enter location name'}
                         textInputStyle={styles.LocationTitle}
                       />
-                      <Input isNoLabel name='short_description' value={values.short_description} label='Nhập chú thích...' textInputStyle={{ color: Colors.GRAY_LIGHT, fontSize: Sizes.Note, fontFamily: fonts.RobotoItalic, paddingHorizontal: 5 }} />
+                      <Input isNoLabel name='short_description' value={values.short_description} label={vi ? 'Nhập chú thích...' : 'Enter short description...'} textInputStyle={{ color: Colors.GRAY_LIGHT, fontSize: Sizes.Note, fontFamily: fonts.RobotoItalic, paddingHorizontal: 5 }} />
                     </View>
                     <View style={styles.ratingContainer}>
                       {starcomponent(convertStringToNumber(`${values.rate}`))}
-                      <Input isNoLabel name='rate' value={`${values.rate}`} label='Nhập đánh giá' textInputStyle={{ color: Colors.GRAY_LIGHT, fontSize: Sizes.Note, fontFamily: fonts.RobotoItalic }} />
+                      <Input isNoLabel name='rate' value={`${values.rate}`} label={vi ? 'Nhập đánh giá' : 'Rating'} textInputStyle={{ color: Colors.GRAY_LIGHT, fontSize: Sizes.Note, fontFamily: fonts.RobotoItalic }} />
                     </View>
                   </View>
                   <View style={styles.LocationDetail}>
@@ -173,16 +176,16 @@ const AddLocationScreen = ({ route }) => {
                         name='location-pin'
                         size={scaleFactor(25)}
                       />
-                      <Input isNoLabel name='country' value={values.country} label='Nhập quốc gia' textInputStyle={{ color: Colors.GRAY_LIGHT, fontSize: Sizes.Note, fontFamily: fonts.RobotoItalic, paddingHorizontal: 5 }} />
+                      <Input isNoLabel name='country' value={values.country} label={vi ? 'Nhập quốc gia' : 'Enter country'} textInputStyle={{ color: Colors.GRAY_LIGHT, fontSize: Sizes.Note, fontFamily: fonts.RobotoItalic, paddingHorizontal: 5 }} />
                     </View>
                     <View style={styles.LocationPin}>
                       <TextCustom bold isSmall>Category: </TextCustom>
-                      <Input isNoLabel name='category' value={values.category} label='Nhập loại địa điểm' textInputStyle={{ color: Colors.GRAY_LIGHT, fontSize: Sizes.Note, fontFamily: fonts.RobotoItalic, paddingHorizontal: 5 }} />
+                      <Input isNoLabel name='category' value={values.category} label={vi ? 'Nhập loại địa điểm' : 'Enter category'} textInputStyle={{ color: Colors.GRAY_LIGHT, fontSize: Sizes.Note, fontFamily: fonts.RobotoItalic, paddingHorizontal: 5 }} />
                     </View>
-                    <Input multiline isNoLabel name='description' value={values.description} label='Nhập mô tả...' textInputStyle={{ fontSize: 15 }} />
+                    <Input multiline isNoLabel name='description' value={values.description} label={vi ? 'Nhập mô tả...' : 'Enter description...'} textInputStyle={{ fontSize: 15 }} />
                   </View>
                   <View style={styles.LocationPhoto}>
-                    <Text style={{ fontSize: 18, fontWeight: 'bold', paddingBottom: 10 }}>ẢNH</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', paddingBottom: 10 }}>{vi ? "ẢNH" : 'IMAGE'}</Text>
                     <ImageUpload
                       images={values.image_links}
                       onImageUpload={(status) => setIsLoading(status)}
@@ -195,7 +198,7 @@ const AddLocationScreen = ({ route }) => {
                     />
                   </View>
                   {type !== 'add' && <View style={styles.placesToVisit}>
-                    <Text style={{ fontSize: 18, fontWeight: 'bold', paddingBottom: 10 }}>ĐỊA ĐIỂM THAM QUAN</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', paddingBottom: 10 }}>{vi ? "ĐỊA ĐIỂM THAM QUAN" : 'TOURIST ATTRACTIONS'}</Text>
                     <View style={styles.PhotoContainer}>
                       {Rows(values.places).map((item, index) => {
                         return (
@@ -203,21 +206,21 @@ const AddLocationScreen = ({ route }) => {
                             {item.map((item, columnIndex) => (
                               <View key={columnIndex} style={styles.Images}>
                                 <TouchableOpacity onPress={() => {
-                                  Alert.alert(`${item.name} - ID: ${item.placeid}`, 'Lựa chọn hành động', [
+                                  Alert.alert(`${item.name} - ID: ${item.placeid}`, vi ? 'Lựa chọn hành động' : 'Select action', [
                                     {
-                                      text: 'Cập nhật', onPress: () => {
+                                      text: vi ? 'Cập nhật' : 'Edit', onPress: () => {
                                         setPlaces(item);
                                         setPlacesIndex(index);
                                         setIsAddPlaces(true);
                                       }
                                     },
                                     {
-                                      text: 'Xoá', onPress: () => {
+                                      text: vi ? 'Xoá' : 'Delete', onPress: () => {
                                         const updatedArray = values.places.filter((obj, index) => index !== columnIndex);
                                         setFieldValue('places', updatedArray)
                                       }
                                     },
-                                    { text: 'Huỷ bỏ', onPress: () => { } }
+                                    { text: vi ? 'Huỷ bỏ' : 'Cancel', onPress: () => { } }
                                   ])
                                 }}>
                                   <LocationItem
@@ -243,7 +246,7 @@ const AddLocationScreen = ({ route }) => {
                   </View>}
                 </View>
               </ScrollView>
-              <ModalCommon isVisible={showQRCode} title='Mã QR Địa Điểm' onClose={() => setShowQRCode(false)}>
+              <ModalCommon isVisible={showQRCode} title={vi ? 'Mã QR Địa Điểm' : 'Location QR code'} onClose={() => setShowQRCode(false)}>
                 <View style={{ height: SCREEN_HEIGHT * 0.4 }}>
                   <Container bgColor='white' style={{ paddingHorizontal: 0 }}>
                     <View style={{ flex: 1, paddingVertical: 10, justifyContent: 'center', alignItems: 'center' }}>
@@ -251,7 +254,7 @@ const AddLocationScreen = ({ route }) => {
                     </View>
                     <Row style={{}}>
                       <Button
-                        title='Xuất Mã QR'
+                        title={vi ? 'Xuất Mã QR' : 'Export QR Code'}
                         radius={10}
                         color='white'
                         onPress={() => getDataURL()}
@@ -267,7 +270,7 @@ const AddLocationScreen = ({ route }) => {
                   <Button
                     disabled={!isValid}
                     bgColor={Colors.SUCCESS}
-                    title={type === 'add' ? 'TẠO' : 'CẬP NHẬT'}
+                    title={type === 'add' ? (vi ? 'TẠO' : 'CREATE') : (vi ? 'CẬP NHẬT' : 'UPDATE')}
                     radius={10}
                     iconRight={{ type: 'Feather', name: 'check-circle' }}
                     color={Colors.WHITE}
@@ -277,20 +280,20 @@ const AddLocationScreen = ({ route }) => {
               </Row>
             </SafeView>}
             {isAddPlaces && <SafeView>
-              <Loading2 text='Vui lòng đợi giây lát...' isVisible={isLoading} />
+              <Loading2 text={vi ? 'Vui lòng đợi giây lát...' : 'Loading, please wait...'} isVisible={isLoading} />
               <Header
-                title={placesIndex === undefined ? 'Thêm điểm tham quan' : `${values.places[placesIndex].name}`}
+                title={placesIndex === undefined ? (vi ? 'Thêm điểm tham quan' : 'Add sight seeing spot') : `${values.places[placesIndex].name}`}
                 isMenu={false} currentScreenOff onBackPress={() => {
-                  Alert.alert('Chưa lưu thông tin', 'Thông tin chưa được lưu\nBạn có chắc muốn thoát?', [
+                  Alert.alert(vi ? 'Chưa lưu thông tin' : 'Data not saved', vi ? 'Thông tin chưa được lưu\nBạn có chắc muốn thoát?' : 'Data not saved\nProceed to go back?', [
                     {
-                      text: 'Thoát', onPress: () => {
+                      text: vi ? 'Thoát' : 'Go back', onPress: () => {
                         setPlaces(defaultPlaces);
                         setIsAddPlaces(false);
                         setPlacesIndex(undefined);
                       }
                     },
                     {
-                      text: 'Lưu', onPress: async () => {
+                      text: vi ? 'Lưu' : 'Save', onPress: async () => {
                         await updatePlaces();
                         setPlaces(defaultPlaces);
                         setIsAddPlaces(false);
@@ -328,7 +331,7 @@ const AddLocationScreen = ({ route }) => {
                   <View style={styles.TitleContainer}>
                     <TextInput
                       style={[styles.inputFormNoLabel, styles.LocationTitle]}
-                      placeholder={'Tên điểm tham quan'}
+                      placeholder={vi ? 'Tên điểm tham quan' : 'touris attraction name'}
                       defaultValue={placesIndex === undefined ? undefined : values.places[placesIndex].name}
                       onChangeText={(str) => setPlaces({ ...places, name: str })}
                     />
@@ -337,7 +340,7 @@ const AddLocationScreen = ({ route }) => {
                       <TextInput
                         style={[styles.inputFormNoLabel, { color: Colors.GRAY_LIGHT, fontSize: Sizes.Note, fontFamily: fonts.RobotoItalic }]}
                         defaultValue={placesIndex === undefined ? undefined : `${values.places[placesIndex].rating}`}
-                        placeholder={'Nhập đánh giá'}
+                        placeholder={vi ? 'Nhập đánh giá' : 'Enter review'}
                         onChangeText={(str) => setPlaces({ ...places, rating: convertStringToNumber(str) })}
                       />
                     </View>
@@ -346,7 +349,7 @@ const AddLocationScreen = ({ route }) => {
                     <TextInput
                       style={[styles.inputFormNoLabel, { color: Colors.GRAY_LIGHT, fontSize: Sizes.Note, fontFamily: fonts.RobotoItalic, paddingHorizontal: 5 }]}
                       defaultValue={placesIndex === undefined ? undefined : values.places[placesIndex].short_description ?? ''}
-                      placeholder={'Nhập chú thích...'}
+                      placeholder={vi ? 'Nhập chú thích...' : 'Enter description...'}
                       onChangeText={(str) => setPlaces({ ...places, short_description: str })}
                     />
                   </View>
@@ -360,7 +363,7 @@ const AddLocationScreen = ({ route }) => {
                       />
                       <TextInput
                         style={[styles.inputFormNoLabel, { color: Colors.GRAY_LIGHT, fontSize: Sizes.Note, fontFamily: fonts.RobotoItalic, paddingHorizontal: 5 }]}
-                        placeholder={`Nhập địa chỉ`}
+                        placeholder={vi ? `Nhập địa chỉ` : 'Enter address'}
                         defaultValue={placesIndex === undefined ? undefined : values.places[placesIndex].address ?? ''}
                         onChangeText={(str) => setPlaces({ ...places, address: str })}
                       />
@@ -370,20 +373,20 @@ const AddLocationScreen = ({ route }) => {
                       <TextInput
                         style={[styles.inputFormNoLabel, { color: Colors.GRAY_LIGHT, fontSize: Sizes.Note, fontFamily: fonts.RobotoItalic, paddingHorizontal: 5 }]}
                         defaultValue={placesIndex === undefined ? undefined : values.places[placesIndex].category ?? undefined}
-                        placeholder={'Nhập loại địa điểm...'}
+                        placeholder={vi ? 'Nhập loại địa điểm...' : 'Enter category'}
                         onChangeText={(str) => setPlaces({ ...places, category: str })}
                       />
                     </View>
                     <TextInput
                       style={[styles.inputFormNoLabel, { fontSize: 15 }]}
-                      placeholder={'Nhập mô tả...'}
+                      placeholder={vi ? 'Nhập mô tả...' : 'Enter description...'}
                       defaultValue={placesIndex === undefined ? undefined : values.places[placesIndex].description ?? undefined}
                       onChangeText={(str) => setPlaces({ ...places, description: str })}
                       multiline
                     />
                   </View>
                   <View style={styles.LocationPhoto}>
-                    <Text style={{ fontSize: 18, fontWeight: 'bold', paddingBottom: 10 }}>ẢNH</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', paddingBottom: 10 }}>{vi ? "ẢNH" : 'IMAGE'}</Text>
                     <ImageUpload
                       images={places.image_link}
                       onImageUpload={(status) => setIsLoading(status)}
@@ -399,7 +402,7 @@ const AddLocationScreen = ({ route }) => {
                   </View>
                 </View>
               </ScrollView>
-              <ModalCommon isVisible={showQRCode} title='Mã QR Địa Điểm' onClose={() => setShowQRCode(false)}>
+              <ModalCommon isVisible={showQRCode} title={vi ? 'Mã QR Địa Điểm' : 'Place QR Code'} onClose={() => setShowQRCode(false)}>
                 <View style={{ height: SCREEN_HEIGHT * 0.4 }}>
                   <Container bgColor='white' style={{ paddingHorizontal: 0 }}>
                     <View style={{ flex: 1, paddingVertical: 10, justifyContent: 'center', alignItems: 'center' }}>
@@ -407,7 +410,7 @@ const AddLocationScreen = ({ route }) => {
                     </View>
                     <Row style={{}}>
                       <Button
-                        title='Xuất Mã QR'
+                        title={vi ? 'Xuất Mã QR' : 'Export QR Code'}
                         radius={10}
                         color='white'
                         onPress={() => getDataURL()}

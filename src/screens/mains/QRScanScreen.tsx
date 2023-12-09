@@ -17,7 +17,7 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const QRScanScreen = () => {
 	const { locations, places } = useSelector((state: RootState) => state.master);
-	const { userParams } = useSelector((state: RootState) => state.global);
+	const { userParams, lang } = useSelector((state: RootState) => state.global);
 	const isFocused = useIsFocused();
 	const dispatch = useDispatch();
 	const [isScanQR, setIsScanQR] = useState<boolean>(false);
@@ -36,6 +36,8 @@ const QRScanScreen = () => {
 		const granted = await ImagePicker.requestCameraPermissionsAsync();
 		(status !== 'granted' && grantedCamera.status !== "granted" && granted.status !== 'granted') ? Alert.alert('Vui lòng cấp quyền truy cập Camera!', '', [{ text: 'OK', style: 'cancel' }]) : (setIsScanQR(true));
 	};
+
+	let vi:boolean = lang === 'vi'
 
 	const handleScanQR = ({ data }) => {
 		let item: string = data;
@@ -82,16 +84,18 @@ const QRScanScreen = () => {
 	}, [isFocused, handleGetLocation])
 
 	const OnLocationPress = (item: ILocation) => {
-		Alert.alert(`${item.name}`, `Vui lòng lựa chọn hành động`, [
-			{ text: 'Cập nhật', onPress: () => goToScreen(ScreenType.Detail.AddLocation, { Location: item, type: 'update' }) },
+		Alert.alert(`${item.name}`, vi ? `Vui lòng lựa chọn hành động` : 'Please select action', [
+			{ text: vi ? 'Cập nhật' : 'Edit', onPress: () => {
+				goToScreen(ScreenType.Detail.AddLocation, { Location: item, type: 'update' })
+			}},
 			{
-				text: 'Xoá', onPress: () => {
+				text: vi ? 'Xoá' : 'Delete', onPress: () => {
 					dispatch(MasterActions.deleteLocation(`${item.id}`));
 					const updatedArray = locationList.filter(obj => obj.id !== item.id);
 					setLocationList([...updatedArray])
 				}
 			},
-			{ text: 'Huỷ bỏ', onPress: () => { } }
+			{ text: vi ? 'Huỷ bỏ' : 'Cancel', onPress: () => { } }
 		])
 	}
 
@@ -111,7 +115,7 @@ const QRScanScreen = () => {
 			</View>}
 			{!isScanQR && <View style={styles.container}>
 				{userParams.usertype !== 'admin' && <View style={{alignItems:'center', justifyContent: 'center', flex: 1}}>
-						<TextCustom bold style={{alignSelf:'center', justifyContent:'center'}}>{'Khong phai ma QR duoc xuat tu ung dung!\n Vui long thu lai!'}</TextCustom>
+						<TextCustom bold style={{alignSelf:'center', justifyContent:'center'}}>{vi ? 'Khong phai ma QR duoc xuat tu ung dung!\n Vui long thu lai!' : 'This QR is not exported from the app!\n Please try again!'}</TextCustom>
 						<Button title='SCAN QR' onPress={()=>setIsScanQR(true)}></Button>
 					</View>}
 				{userParams.usertype === 'admin' && <>

@@ -5,13 +5,17 @@ import { Column, Container, Header, Row } from '~/components/sections';
 import { Formik } from 'formik';
 import { ISearchCommon, IUser } from '~/apis/types.service';
 import MasterActions from '~/redux/master/master.actions';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Card } from '~/components/cards';
 import { Colors } from '~/configs';
 import { UserValidates } from '~/validates/UserValidates';
+import { RootState } from '~/redux/reducers';
+import { UserValidatesEn } from '~/validates/UserValidatesEn';
 
 const UpdateUserScreen = ({ route }) => {
   const dispatch = useDispatch();
+  const { lang } = useSelector((state: RootState) => state.global);
+  let vi:boolean = lang === 'vi'
   const { user } = route.params ?? '';
   const userModel: IUser = {
     name: user.name ?? '',
@@ -23,16 +27,16 @@ const UpdateUserScreen = ({ route }) => {
     usertype: user.usertype ?? 'user',
   }
   const UserType: ISearchCommon[] = [
-    { label: 'Người dùng', value: 'user', keySearch: 'user' },
-    { label: 'Quản trị viên', value: 'admin', keySearch: 'admin' },
+    { label: vi ? 'Người dùng' : 'User', value: 'user', keySearch: 'user' },
+    { label: vi ? 'Quản trị viên' : 'Administrator', value: 'admin', keySearch: 'admin' },
   ]
 
   return (
     <SafeView>
-      <Header title={'Cập nhật thông tin user'} isMenu={false} disableThreeDot noShadow />
+      <Header title={vi ? 'Cập nhật thông tin user' : 'Update information'} isMenu={false} disableThreeDot noShadow />
       <Container style={{ flex: 1, paddingTop: 10 }}>
         <Formik
-          validationSchema={UserValidates}
+          validationSchema={vi ? UserValidates : UserValidatesEn}
           initialValues={userModel}
           onSubmit={(values) => {
             const obj: IUser = { ...userModel, ...values }
@@ -46,11 +50,11 @@ const UpdateUserScreen = ({ route }) => {
                   <Row>
                     <Column>
                       <Dropdown
-                        label={'Phân quyền'}
+                        label={vi ? 'Phân quyền' : 'Role'}
                         name='usertype'
                         data={UserType}
                         selectedValue={values.usertype}
-                        modalTitle='Tuỳ chọn phân quyền'
+                        modalTitle={vi ? 'Tuỳ chọn phân quyền' : 'Role option'}
                       />
                     </Column>
                   </Row>
@@ -59,7 +63,7 @@ const UpdateUserScreen = ({ route }) => {
                       <Input
                         value={values.name}
                         name="name"
-                        label={'Họ tên'}
+                        label={vi ? 'Họ tên' : 'Fullname'}
                       />
                     </Column>
                   </Row>
@@ -68,7 +72,7 @@ const UpdateUserScreen = ({ route }) => {
                       <Input
                         value={values.mobile}
                         name='mobile'
-                        label={'Số điện thoại'}
+                        label={vi ? 'Số điện thoại' : 'Phone number'}
                       />
                     </Column>
                   </Row>
@@ -77,7 +81,7 @@ const UpdateUserScreen = ({ route }) => {
                       <Input
                         value={values.address}
                         name='address'
-                        label={'Địa chỉ'}
+                        label={vi ? 'Địa chỉ' : 'Adress'}
                       />
                     </Column>
                   </Row>
@@ -95,7 +99,7 @@ const UpdateUserScreen = ({ route }) => {
                       <Input
                         value={values.imgurl}
                         name='imgurl'
-                        label={'Link ảnh'}
+                        label={vi ? 'Link ảnh' : 'Image URL'}
                       />
                     </Column>
                   </Row>
@@ -104,7 +108,7 @@ const UpdateUserScreen = ({ route }) => {
                   <Column style={{ justifyContent: 'center' }}>
                     <Button
                       disabled={!isValid}
-                      title={'Cập nhật thông tin'}
+                      title={vi ? 'Cập nhật thông tin' : 'Update information'}
                       radius={10}
                       iconRight={{ type: 'AntDesign', name: 'checkcircle' }}
                       color={Colors.WHITE}

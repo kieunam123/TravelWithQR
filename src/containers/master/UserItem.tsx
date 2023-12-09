@@ -13,6 +13,7 @@ export interface IProps {
   username: string;
   imgurl?: string;
   usertype?: string;
+  vi?: boolean;
 }
 
 const UserItem: React.FC<IProps> = (props) => {
@@ -47,30 +48,30 @@ const UserItem: React.FC<IProps> = (props) => {
             </View>
             <View style={{ flex: 2 }}>
               <View style={styles.rowItem}>
-                <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>Họ tên</TextCustom>
+                <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>{props.vi ? 'Họ tên' : 'Full name'}</TextCustom>
                 <TextCustom bold style={styles.rowText}>{props.name}</TextCustom>
               </View>
               <View style={styles.rowItem}>
-                <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>Username</TextCustom>
+                <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>{'Username'}</TextCustom>
                 <TextCustom style={styles.rowText}>
                   {props.username}
                 </TextCustom>
               </View>
               <View style={styles.rowItem}>
-                <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>User ID</TextCustom>
+                <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>{props.vi ? 'ID người dùng':"User ID"}</TextCustom>
                 <TextCustom style={styles.rowText}>{props.id}</TextCustom>
               </View>
               <View style={styles.rowItem}>
-                <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>Số điện thoại</TextCustom>
+                <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>{props.vi ? "Số điện thoại" : 'Phone number'}</TextCustom>
                 <TextCustom style={styles.rowText}>{props.mobile}</TextCustom>
               </View>
               <View style={styles.rowItem}>
-                <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>Địa chỉ</TextCustom>
+                <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>{props.vi ? "Địa chỉ" : 'Address'}</TextCustom>
                 <TextCustom style={styles.rowText}>{props.address}</TextCustom>
               </View>
 
               <View style={styles.rowItem}>
-                <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>Phân quyền</TextCustom>
+                <TextCustom style={{ fontSize: 12, fontWeight: 'bold' }}>{props.vi ? "Phân quyền" : 'Role'}</TextCustom>
                 <TextCustom style={styles.rowText}>
                   {props.usertype ?? 'user'}
                 </TextCustom>

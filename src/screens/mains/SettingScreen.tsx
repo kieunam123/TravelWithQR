@@ -1,18 +1,20 @@
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import { Header } from '~/components/sections'
 import { Icon, SafeView, TextCustom } from '~/components/commons'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '~/redux/reducers';
 import { convertStringToNumber, goToScreen } from '~/helpers/UtilitiesHelper';
 import ScreenType from '~/navigations/screen.constant';
 import { IUser } from '~/apis/types.service';
 import { Colors } from '~/configs';
 import { IUserParams } from '~/commons/types';
+import GlobalActions from '~/redux/global/global.actions';
 
 const SettingScreen = () => {
-	const { userParams } = useSelector((state: RootState) => state.global);
+	const { userParams, lang } = useSelector((state: RootState) => state.global);
 	const [userinfo, setUserInfo] = useState<IUserParams>(userParams);
+	const dispatch = useDispatch();
 	const user: IUser = {
 		name: userinfo.name,
 		mobile: userinfo.phone,
@@ -28,6 +30,8 @@ const SettingScreen = () => {
 		goToScreen(ScreenType.Detail.UpdateUser, { user: user })
 	};
 
+	let vi:boolean = lang === 'vi'
+
 	const handleChangePassword = () => {
 		// Navigate to the change password screen
 		// Add navigation logic here
@@ -42,9 +46,21 @@ const SettingScreen = () => {
 	};
 
 	const handleChangAvatar = () => {
-
+		//code to change avatar...
 	}
-	
+
+	const handleTheme = () => {
+		//code to change theme...
+	}
+
+	const handleSwitchLang = () => {
+		Alert.alert(vi ? 'Lựa chọn ngôn ngữ' : 'Select Language', '',[
+			{text: vi ? 'Tiếng Việt' : 'Vietnamese',onPress: ()=> dispatch(GlobalActions.setLang('vi'))},
+			{text: vi ? 'Tiếng Anh' : 'English', onPress: ()=> dispatch(GlobalActions.setLang('en'))},
+			{text: vi ? 'Huỷ bỏ' : 'Cancel', onPress:()=>{}}
+		])
+	}
+ 	
 	useEffect(() => {
 		setUserInfo(userParams);
 	},[userParams])
@@ -62,7 +78,7 @@ const SettingScreen = () => {
 
 				{/* Change Avatar option */}
 				<TouchableOpacity onPress={handleChangAvatar}>
-					<Text style={styles.changeAvatar}>Change Avatar</Text>
+					<Text style={styles.changeAvatar}>{!vi ? "Change Avatar" : 'Thay đổi ảnh đại diện'}</Text>
 				</TouchableOpacity>
 			</View>
 			{/* User Information */}
@@ -74,27 +90,27 @@ const SettingScreen = () => {
 			<View style={styles.settings}>
 				<TouchableOpacity onPress={handleUpdateInfo} style={styles.settingOption}>
 					<Icon type='FontAwesome' name="user" size={25} color={'blue'} />
-					<TextCustom bold style={styles.settingText}>Thông Tin Cá Nhân</TextCustom>
+					<TextCustom bold style={styles.settingText}>{vi ? "Thông Tin Cá Nhân" : 'Profile Information'}</TextCustom>
 				</TouchableOpacity>
 				<TouchableOpacity onPress={handleChangePassword} style={styles.settingOption}>
 					<Icon type='FontAwesome' name="lock" size={25} color={'blue'} />
-					<TextCustom bold style={styles.settingText}>Đổi mật khẩu</TextCustom>
+					<TextCustom bold style={styles.settingText}>{vi ? "Đổi mật khẩu" : 'Change Password'}</TextCustom>
 				</TouchableOpacity>
-				<TouchableOpacity onPress={handleLogout} style={styles.settingOption}>
+				<TouchableOpacity onPress={handleSwitchLang} style={styles.settingOption}>
 					<Icon name="contact-support" type='MaterialIcons' size={25} color={'blue'} />
-					<TextCustom bold style={styles.settingText}>Liên Hệ & Hỗ Trợ</TextCustom>
+					<TextCustom bold style={styles.settingText}>{vi ? "Thay đổi ngôn ngữ" : 'Switch Language'}</TextCustom>
 				</TouchableOpacity>
-				<TouchableOpacity onPress={handleLogout} style={styles.settingOption}>
+				<TouchableOpacity onPress={()=>{}} style={styles.settingOption}>
 					<Icon name="note" type='SimpleLineIcons' size={25} color={'blue'} />
-					<TextCustom bold style={styles.settingText}>Version Log</TextCustom>
+					<TextCustom bold style={styles.settingText}>{"Version Log"}</TextCustom>
 				</TouchableOpacity>
-				<TouchableOpacity onPress={handleLogout} style={styles.settingOption}>
+				<TouchableOpacity onPress={handleTheme} style={styles.settingOption}>
 					<Icon name="theme-light-dark" type='MaterialCommunityIcons' size={25} color={'blue'} />
-					<TextCustom bold style={styles.settingText}>Dark Mode</TextCustom>
+					<TextCustom bold style={styles.settingText}>{vi ? 'Chuyển đổi giao diện' : 'Switch Theme'}</TextCustom>
 				</TouchableOpacity>
 				<TouchableOpacity onPress={handleLogout} style={styles.settingOption}>
 					<Icon type='FontAwesome' name="sign-out" size={25} color={'blue'} />
-					<TextCustom bold style={styles.settingText}>Đăng xuất</TextCustom>
+					<TextCustom bold style={styles.settingText}>{vi ? "Đăng xuất" : 'Log Out'}</TextCustom>
 				</TouchableOpacity>
 			</View>
 		</ScrollView>

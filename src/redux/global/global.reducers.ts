@@ -56,7 +56,7 @@ const initialState: IGlobalState = {
     accepted: false,
     actionName: '',
   },
-  lang: 'vi'
+  lang: 'en'
 };
 
 export default function GlobalReducer(

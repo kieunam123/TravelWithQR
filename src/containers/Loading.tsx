@@ -25,8 +25,8 @@ export interface IProps {
 }
 
 const Loading = ({fontsLoaded}:IProps) => {
-  const {isLoading} = useSelector((state: RootState) => state.global);
-
+  const {isLoading, lang} = useSelector((state: RootState) => state.global);
+  let vi:boolean = lang === 'vi'
   return (
     <>
       <Modal transparent visible={isLoading} animationType="none">
@@ -36,7 +36,7 @@ const Loading = ({fontsLoaded}:IProps) => {
             <View style={{height: 100}}>
               <MaterialIndicator color="white" />
               <TextCustom style={{color: Colors.WHITE}}>
-                Vui lòng đợi trong giây lát.
+                {vi ? "Vui lòng đợi trong giây lát." : 'Loading, please wait...'}
               </TextCustom>
             </View>
           </View>
